@@ -6,15 +6,17 @@ import { ProjectsGrid } from "@/components/pages/projects-grid"
 import { StrategiesGrid } from "@/components/pages/strategies-grid"
 import { ProjectDetail } from "@/components/pages/project-detail"
 import { StrategyDetail } from "@/components/pages/strategy-detail"
+import { Login } from "@/components/pages/login"
 
 type ViewState =
+  | { type: "login" }
   | { type: "projects" }
   | { type: "strategies" }
   | { type: "project-detail"; projectId: string }
   | { type: "strategy-detail"; strategyId: string }
 
 export default function Page() {
-  const [view, setView] = useState<ViewState>({ type: "projects" })
+  const [view, setView] = useState<ViewState>({ type: "login" })
 
   const activeNav: TopNavKey | null =
     view.type === "projects" || view.type === "project-detail"
@@ -22,6 +24,10 @@ export default function Page() {
       : view.type === "strategies" || view.type === "strategy-detail"
         ? "strategies"
         : null
+
+  function handleLogin() {
+    setView({ type: "projects" })
+  }
 
   function handleTopNav(nav: TopNavKey) {
     if (nav === "projects") {
@@ -37,6 +43,10 @@ export default function Page() {
 
   function handleSelectStrategy(strategyId: string) {
     setView({ type: "strategy-detail", strategyId })
+  }
+
+  if (view.type === "login") {
+    return <Login onLogin={handleLogin} />
   }
 
   return (
