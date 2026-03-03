@@ -531,7 +531,7 @@ export function StrategyTerms({ isNewStrategy = false }: StrategyTermsProps) {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#EFF6FF]">
             <FileText className="h-8 w-8 text-[#2563EB]" />
           </div>
-          <h3 className="text-lg font-semibold text-[#111827] mb-2">{"\u6682\u65E0\u6761\u6B3E\u6E05\u5355"}</h3>
+          <h3 className="text-lg font-semibold text-[#111827] mb-2">{"\u6682\u65E0\u6761\u6B3E"}</h3>
           <button className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8]">
             <Plus className="h-4 w-4" />
             {"\u521B\u5EFA\u7B2C\u4E00\u4E2A\u6761\u6B3E"}
