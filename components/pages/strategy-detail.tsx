@@ -103,9 +103,9 @@ export function StrategyDetail({ strategyId, strategy }: StrategyDetailProps) {
         {activeSubPage === "overview" ? (
           <StrategyOverview strategy={strategy} />
         ) : activeSubPage === "hypotheses" ? (
-          <StrategyHypotheses />
+          <StrategyHypotheses isNewStrategy={strategyId.startsWith("new-")} />
         ) : (
-          <StrategyTerms />
+          <StrategyTerms isNewStrategy={strategyId.startsWith("new-")} />
         )}
       </div>
     </div>
