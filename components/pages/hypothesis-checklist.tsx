@@ -232,7 +232,7 @@ const hypothesisDetails: Record<string, HypothesisDetail> = {
   "tech-bg": {
     id: "tech-bg",
     title: "创始人闫俊杰具有扎实的人工智能学术背景",
-    qaId: "H-2024-001",
+    qaId: "QA-2024-001",
     createdAt: "2024-01-15",
     updatedAt: "2024-02-20",
     status: "verified",
@@ -240,70 +240,86 @@ const hypothesisDetails: Record<string, HypothesisDetail> = {
     valuePoints: [
       {
         id: "vp1",
-        title: "清华大学计算机系博士学位",
+        title: "价值点1",
         evidence: {
-          description: "创始人毕业于清华大学计算机系,获得博士学位,专注于自然语言处理研究方向。",
+          description: "创始人拥有博士学位，在AI领域发表过15篇高质量学术论文",
           files: [
-            { name: "学历证明.pdf", size: "1.2MB", date: "2024-01-10" },
-            { name: "学术论文列表.xlsx", size: "156KB", date: "2024-01-10" },
+            { name: "闫俊杰_CV.pdf", size: "2.4 MB", date: "2024-01-18" },
+            { name: "Google Scholar 引用数据.xlsx", size: "1.8 MB", date: "2024-01-19" },
           ],
         },
         analysis: {
-          content: "闫俊杰博士的学术背景为公司的技术研发提供了坚实的理论基础。他在NLP领域发表的多篇顶会论文证明了其学术造诣。",
+          content: "创始人拥有博士学位，为该领域高学历人才。在人工智能领域发表过15篇高质量学术论文，其中5篇发表在顶级期刊上。曾获得国家自然科学基金青年项目资助，具备扎实的理论基础和研究能力。",
           creator: PEOPLE.zhangwei,
-          reviewers: [PEOPLE.lisi, PEOPLE.wangwu],
-          createdAt: "2024-01-15",
+          reviewers: [PEOPLE.lisi, PEOPLE.wangwu, PEOPLE.chenzong],
+          createdAt: "2024-01-18",
         },
         comments: [
-          { author: "李四", content: "建议补充博士期间的具体研究成果", time: "2024-01-16 10:30" },
-          { author: "张伟", content: "已添加论文列表作为支撑材料", time: "2024-01-16 14:20" },
+          { author: "王五", content: "建议补充创始人在工业界的实际项目经验资料", time: "2024-01-19 14:30" },
         ],
+      },
+      {
+        id: "vp2",
+        title: "价值点2",
+        evidence: {
+          description: "在Google Scholar上的H指数为8，总引用次数超过500次，证明其研究成果具有较高的学术影响力",
+          files: [
+            { name: "学术影响力报告.pdf", size: "3.1 MB", date: "2024-01-19" },
+          ],
+        },
+        analysis: {
+          content: "H指数达到8，在同龄学者中处于较高水平。其研究成果被多家知名企业引用并应用于实际产品中，证明其学术研究具有很高的实用价值。",
+          creator: PEOPLE.zhangwei,
+          reviewers: [PEOPLE.lisi, PEOPLE.zhaoliu],
+          createdAt: "2024-01-19",
+        },
+        comments: [],
       },
     ],
     riskPoints: [
       {
         id: "rp1",
-        title: "学术背景向商业转化的不确定性",
+        title: "风险点1",
         evidence: {
-          description: "创始人此前主要在学术界工作,直接商业化经验有限。",
+          description: "学术背景较强但商业转化经验相对有限，需关注从学术到产业的过渡能力",
           files: [
-            { name: "职业经历调查.pdf", size: "890KB", date: "2024-01-12" },
+            { name: "行业对标分析.pdf", size: "1.5 MB", date: "2024-01-20" },
           ],
         },
         analysis: {
-          content: "虽然学术背景扎实,但需要关注其商业化执行能力。建议通过后续的商业化经验假设进行补充验证。",
+          content: "创始人在商业化方面的经验主要集中在技术转让和专利授权领域，尚未有过完整的产品商业化经历。建议关注其团队中是否有强有力的商业运营搭档补足这一短板。",
           creator: PEOPLE.lisi,
-          reviewers: [PEOPLE.zhangwei],
-          createdAt: "2024-01-16",
+          reviewers: [PEOPLE.zhangwei, PEOPLE.wangwu],
+          createdAt: "2024-01-20",
         },
         comments: [
-          { author: "王五", content: "同意,商业化能力需要单独评估", time: "2024-01-17 09:15" },
+          { author: "张伟", content: "同意这一风险评估，COO张鹏的加入在一定程度上弥补了这一缺陷", time: "2024-01-20 16:00" },
         ],
       },
     ],
     committeeDecision: {
       conclusion: "假设成立",
       status: "approved",
-      content: "经投委会讨论,一致认可创始人的学术背景,该假设可作为投资决策的正向支撑因素。",
+      content: "经投委会审议，创始人的学术背景得到充分验证，其在AI领域的研究深度和影响力均达到行业领先水平。虽然商业化经验存在一定风险，但团队整体配置可以弥补。建议持续跟踪其商业化进展。",
       creator: PEOPLE.wangzong,
-      reviewers: [PEOPLE.chenzong, PEOPLE.zhaoliu],
-      createdAt: "2024-02-01",
+      reviewers: [PEOPLE.chenzong, PEOPLE.zhangwei, PEOPLE.lisi],
+      createdAt: "2024-01-22",
       comments: [
-        { author: "陈总", content: "风控角度无异议", time: "2024-02-01 16:00" },
+        { author: "张伟", content: "同意投委结论，建议在条款中加入创始人竞业禁止条款", time: "2024-01-22 15:00" },
       ],
     },
     verification: {
-      conclusion: "已验证",
+      conclusion: "假设已验证",
       status: "confirmed",
-      content: "通过背景调查和第三方核实,确认创始人学历真实有效,学术成果获得业界认可。",
+      content: "投资后6个月跟踪显示，创始人的学术背景为公司招募顶级人才提供了重要背书，已成功吸引多名顶级学者加入。技术团队在大模型训练优化方面取得突破性进展，与创始人的学术积累密切相关。",
       creator: PEOPLE.zhangwei,
-      reviewers: [PEOPLE.lisi],
-      createdAt: "2024-02-20",
+      reviewers: [PEOPLE.lisi, PEOPLE.wangwu],
+      createdAt: "2024-07-15",
       comments: [],
     },
     linkedTerms: [
-      { id: "lt1", title: "创始人锁定条款", termId: "founder-lock", status: "approved" },
-      { id: "lt2", title: "关键人条款", termId: "key-man", status: "pending" },
+      { id: "lt1", title: "投资方有权委派一名董事进入公司董事会", termId: "TM-2024-001", status: "approved" },
+      { id: "lt2", title: "投资方有权委派一名观察员列席董事会会议", termId: "TM-2024-002", status: "approved" },
     ],
   },
 }
@@ -461,121 +477,366 @@ export function HypothesisChecklist({ isNewProject = false, project }: Hypothesi
     return (
       <div className="h-full overflow-auto bg-[#F9FAFB]">
         <div className="mx-auto max-w-5xl px-6 py-6">
-          {/* Back button */}
-          <button
-            onClick={handleBackToList}
-            className="mb-4 inline-flex items-center gap-2 text-sm text-[#6B7280] hover:text-[#111827] transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            返回假设清单
-          </button>
+          {/* Breadcrumb */}
+          <div className="mb-4 flex items-center gap-2 text-sm text-[#6B7280]">
+            <button onClick={handleBackToList} className="hover:text-[#2563EB] transition-colors">
+              项目库
+            </button>
+            <ChevronRight className="h-4 w-4" />
+            <button onClick={handleBackToList} className="hover:text-[#2563EB] transition-colors">
+              MiniMax
+            </button>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-[#111827]">假设清单</span>
+          </div>
 
           {/* Detail header */}
           <div className="bg-white rounded-xl border border-[#E5E7EB] p-6 mb-6">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <Badge className={cn("text-xs", statusConfig[selectedDetail.status].color)}>
-                    {statusConfig[selectedDetail.status].label}
-                  </Badge>
-                  <span className="text-xs text-[#6B7280]">{selectedDetail.qaId}</span>
-                </div>
-                <h1 className="text-xl font-bold text-[#111827]">{selectedDetail.title}</h1>
-              </div>
+            <div className="flex items-start justify-between mb-3">
+              <h1 className="text-xl font-bold text-[#111827]">{selectedDetail.title}</h1>
+              <Badge className="bg-[#DCFCE7] text-[#166534] border-[#BBF7D0]">成立</Badge>
             </div>
-            <div className="flex items-center gap-6 text-sm text-[#6B7280]">
-              <span>创建人: {selectedDetail.creator.name}</span>
-              <span>创建时间: {selectedDetail.createdAt}</span>
-              <span>更新时间: {selectedDetail.updatedAt}</span>
+            <p className="text-sm text-[#6B7280] mb-3">
+              ID: {selectedDetail.qaId} | 创建时间: {selectedDetail.createdAt} | 更新时间: {selectedDetail.updatedAt}
+            </p>
+            <div className="flex items-center gap-2">
+              <div className="h-6 w-6 rounded-full bg-[#2563EB] flex items-center justify-center">
+                <span className="text-[10px] text-white font-medium">
+                  {selectedDetail.creator.name.slice(0, 1)}
+                </span>
+              </div>
+              <span className="text-sm text-[#6B7280]">创建者: {selectedDetail.creator.name}</span>
             </div>
           </div>
 
-          {/* Value points */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] p-6 mb-6">
-            <h2 className="text-lg font-semibold text-[#111827] mb-4">价值点</h2>
+          {/* Value points section */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-1 w-1 rounded-full bg-[#22C55E]" />
+              <h2 className="text-base font-semibold text-[#22C55E]">价值点</h2>
+            </div>
             {selectedDetail.valuePoints.map((vp) => (
-              <div key={vp.id} className="border-l-4 border-[#22C55E] pl-4 py-3 mb-4 last:mb-0">
-                <h3 className="font-medium text-[#111827] mb-2">{vp.title}</h3>
-                <p className="text-sm text-[#6B7280] mb-3">{vp.evidence.description}</p>
-                <div className="text-sm text-[#6B7280]">
-                  <span>分析: {vp.analysis.content}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Risk points */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] p-6 mb-6">
-            <h2 className="text-lg font-semibold text-[#111827] mb-4">风险点</h2>
-            {selectedDetail.riskPoints.map((rp) => (
-              <div key={rp.id} className="border-l-4 border-[#EF4444] pl-4 py-3 mb-4 last:mb-0">
-                <h3 className="font-medium text-[#111827] mb-2">{rp.title}</h3>
-                <p className="text-sm text-[#6B7280] mb-3">{rp.evidence.description}</p>
-                <div className="text-sm text-[#6B7280]">
-                  <span>分析: {rp.analysis.content}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Committee decision */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] p-6 mb-6">
-            <h2 className="text-lg font-semibold text-[#111827] mb-4">投委会决策</h2>
-            <div className="flex items-center gap-2 mb-3">
-              <Badge className={cn(
-                "text-xs",
-                selectedDetail.committeeDecision.status === "approved" 
-                  ? "bg-[#DCFCE7] text-[#166534]"
-                  : selectedDetail.committeeDecision.status === "rejected"
-                    ? "bg-[#FEE2E2] text-[#991B1B]"
-                    : "bg-[#FEF3C7] text-[#92400E]"
-              )}>
-                {selectedDetail.committeeDecision.conclusion}
-              </Badge>
-            </div>
-            <p className="text-sm text-[#6B7280]">{selectedDetail.committeeDecision.content}</p>
-          </div>
-
-          {/* Verification */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] p-6 mb-6">
-            <h2 className="text-lg font-semibold text-[#111827] mb-4">验证结论</h2>
-            <div className="flex items-center gap-2 mb-3">
-              <Badge className={cn(
-                "text-xs",
-                selectedDetail.verification.status === "confirmed" 
-                  ? "bg-[#DCFCE7] text-[#166534]"
-                  : selectedDetail.verification.status === "invalidated"
-                    ? "bg-[#FEE2E2] text-[#991B1B]"
-                    : "bg-[#FEF3C7] text-[#92400E]"
-              )}>
-                {selectedDetail.verification.conclusion}
-              </Badge>
-            </div>
-            <p className="text-sm text-[#6B7280]">{selectedDetail.verification.content}</p>
-          </div>
-
-          {/* Linked terms */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] p-6">
-            <h2 className="text-lg font-semibold text-[#111827] mb-4">关联条款</h2>
-            <div className="space-y-2">
-              {selectedDetail.linkedTerms.map((term) => (
-                <div key={term.id} className="flex items-center justify-between p-3 bg-[#F9FAFB] rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Link2 className="h-4 w-4 text-[#6B7280]" />
-                    <span className="text-sm text-[#111827]">{term.title}</span>
+              <div key={vp.id} className="bg-white rounded-xl border border-[#E5E7EB] mb-4 overflow-hidden">
+                <div className="border-l-4 border-[#22C55E] p-5">
+                  <h3 className="font-semibold text-[#22C55E] mb-3">{vp.title}</h3>
+                  
+                  {/* Evidence */}
+                  <div className="mb-4">
+                    <p className="text-xs text-[#6B7280] mb-1">论据支持</p>
+                    <p className="text-sm text-[#111827] mb-3">{vp.evidence.description}</p>
+                    {vp.evidence.files.map((file, idx) => (
+                      <div key={idx} className="flex items-center gap-2 mb-2 p-2 bg-[#F9FAFB] rounded-lg">
+                        <FileText className="h-4 w-4 text-[#2563EB]" />
+                        <span className="text-sm text-[#2563EB]">{file.name}</span>
+                        <span className="text-xs text-[#9CA3AF]">{file.size} · {file.date}</span>
+                      </div>
+                    ))}
                   </div>
-                  <Badge className={cn(
-                    "text-xs",
-                    term.status === "approved" 
-                      ? "bg-[#DCFCE7] text-[#166534]"
-                      : term.status === "rejected"
-                        ? "bg-[#FEE2E2] text-[#991B1B]"
-                        : "bg-[#FEF3C7] text-[#92400E]"
-                  )}>
-                    {term.status === "approved" ? "已批准" : term.status === "rejected" ? "已拒绝" : "待审批"}
+
+                  {/* Analysis */}
+                  <div className="mb-4">
+                    <p className="text-xs text-[#6B7280] mb-1">论证分析</p>
+                    <div className="p-3 bg-[#F9FAFB] rounded-lg">
+                      <p className="text-sm text-[#374151] leading-relaxed">{vp.analysis.content}</p>
+                    </div>
+                  </div>
+
+                  {/* Creator & Reviewers */}
+                  <div className="flex items-center gap-4 text-xs text-[#6B7280] mb-4">
+                    <div className="flex items-center gap-1">
+                      <div className="h-5 w-5 rounded-full bg-[#2563EB] flex items-center justify-center">
+                        <span className="text-[8px] text-white">{vp.analysis.creator.name.slice(0, 1)}</span>
+                      </div>
+                      <span>创建: {vp.analysis.creator.name}</span>
+                    </div>
+                    <span>审批:</span>
+                    {vp.analysis.reviewers.map((r, idx) => (
+                      <div key={idx} className="flex items-center gap-1">
+                        <div className="h-5 w-5 rounded-full bg-[#6B7280] flex items-center justify-center">
+                          <span className="text-[8px] text-white">{r.name.slice(0, 1)}</span>
+                        </div>
+                        <span>{r.name}</span>
+                      </div>
+                    ))}
+                    <span>{vp.analysis.createdAt}</span>
+                  </div>
+
+                  {/* Comments */}
+                  <div>
+                    <p className="text-xs text-[#6B7280] mb-2">评论</p>
+                    {vp.comments.map((c, idx) => (
+                      <div key={idx} className="flex items-start gap-2 mb-2">
+                        <div className="h-6 w-6 rounded-full bg-[#E5E7EB] flex items-center justify-center shrink-0">
+                          <span className="text-[10px] text-[#6B7280]">{c.author.slice(0, 1)}</span>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-medium text-[#111827]">{c.author}</span>
+                            <span className="text-xs text-[#9CA3AF]">{c.time}</span>
+                          </div>
+                          <p className="text-sm text-[#374151]">{c.content}</p>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex items-center gap-2 mt-3">
+                      <input
+                        type="text"
+                        placeholder="添加评论..."
+                        className="flex-1 text-sm border border-[#E5E7EB] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
+                      />
+                      <button className="p-2 text-[#2563EB] hover:bg-[#EFF6FF] rounded-lg transition-colors">
+                        <Send className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Risk points section */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-1 w-1 rounded-full bg-[#EF4444]" />
+              <h2 className="text-base font-semibold text-[#EF4444]">风险点</h2>
+            </div>
+            {selectedDetail.riskPoints.map((rp) => (
+              <div key={rp.id} className="bg-white rounded-xl border border-[#E5E7EB] mb-4 overflow-hidden">
+                <div className="border-l-4 border-[#EF4444] p-5">
+                  <h3 className="font-semibold text-[#EF4444] mb-3">{rp.title}</h3>
+                  
+                  {/* Evidence */}
+                  <div className="mb-4">
+                    <p className="text-xs text-[#6B7280] mb-1">论据支持</p>
+                    <p className="text-sm text-[#111827] mb-3">{rp.evidence.description}</p>
+                    {rp.evidence.files.map((file, idx) => (
+                      <div key={idx} className="flex items-center gap-2 mb-2 p-2 bg-[#F9FAFB] rounded-lg">
+                        <FileText className="h-4 w-4 text-[#2563EB]" />
+                        <span className="text-sm text-[#2563EB]">{file.name}</span>
+                        <span className="text-xs text-[#9CA3AF]">{file.size} · {file.date}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Analysis */}
+                  <div className="mb-4">
+                    <p className="text-xs text-[#6B7280] mb-1">论证分析</p>
+                    <div className="p-3 bg-[#F9FAFB] rounded-lg">
+                      <p className="text-sm text-[#374151] leading-relaxed">{rp.analysis.content}</p>
+                    </div>
+                  </div>
+
+                  {/* Creator & Reviewers */}
+                  <div className="flex items-center gap-4 text-xs text-[#6B7280] mb-4">
+                    <div className="flex items-center gap-1">
+                      <div className="h-5 w-5 rounded-full bg-[#2563EB] flex items-center justify-center">
+                        <span className="text-[8px] text-white">{rp.analysis.creator.name.slice(0, 1)}</span>
+                      </div>
+                      <span>创建: {rp.analysis.creator.name}</span>
+                    </div>
+                    <span>审批:</span>
+                    {rp.analysis.reviewers.map((r, idx) => (
+                      <div key={idx} className="flex items-center gap-1">
+                        <div className="h-5 w-5 rounded-full bg-[#6B7280] flex items-center justify-center">
+                          <span className="text-[8px] text-white">{r.name.slice(0, 1)}</span>
+                        </div>
+                        <span>{r.name}</span>
+                      </div>
+                    ))}
+                    <span>{rp.analysis.createdAt}</span>
+                  </div>
+
+                  {/* Comments */}
+                  <div>
+                    <p className="text-xs text-[#6B7280] mb-2">评论</p>
+                    {rp.comments.map((c, idx) => (
+                      <div key={idx} className="flex items-start gap-2 mb-2">
+                        <div className="h-6 w-6 rounded-full bg-[#E5E7EB] flex items-center justify-center shrink-0">
+                          <span className="text-[10px] text-[#6B7280]">{c.author.slice(0, 1)}</span>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-medium text-[#111827]">{c.author}</span>
+                            <span className="text-xs text-[#9CA3AF]">{c.time}</span>
+                          </div>
+                          <p className="text-sm text-[#374151]">{c.content}</p>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex items-center gap-2 mt-3">
+                      <input
+                        type="text"
+                        placeholder="添加评论..."
+                        className="flex-1 text-sm border border-[#E5E7EB] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
+                      />
+                      <button className="p-2 text-[#2563EB] hover:bg-[#EFF6FF] rounded-lg transition-colors">
+                        <Send className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Committee decision section */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-1 w-1 rounded-full bg-[#2563EB]" />
+              <h2 className="text-base font-semibold text-[#2563EB]">投委决议</h2>
+            </div>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden">
+              <div className="border-l-4 border-[#2563EB] p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-[#111827]">投委会审议结果</h3>
+                  <Badge className="bg-[#DCFCE7] text-[#166534] border-[#BBF7D0]">
+                    {selectedDetail.committeeDecision.conclusion}
                   </Badge>
                 </div>
-              ))}
+                
+                <div className="p-3 bg-[#F9FAFB] rounded-lg mb-4">
+                  <p className="text-sm text-[#374151] leading-relaxed">{selectedDetail.committeeDecision.content}</p>
+                </div>
+
+                {/* Creator & Reviewers */}
+                <div className="flex items-center gap-4 text-xs text-[#6B7280] mb-4">
+                  <div className="flex items-center gap-1">
+                    <div className="h-5 w-5 rounded-full bg-[#2563EB] flex items-center justify-center">
+                      <span className="text-[8px] text-white">{selectedDetail.committeeDecision.creator.name.slice(0, 1)}</span>
+                    </div>
+                    <span>创建: {selectedDetail.committeeDecision.creator.name}</span>
+                  </div>
+                  <span>审批:</span>
+                  {selectedDetail.committeeDecision.reviewers.map((r, idx) => (
+                    <div key={idx} className="flex items-center gap-1">
+                      <div className="h-5 w-5 rounded-full bg-[#6B7280] flex items-center justify-center">
+                        <span className="text-[8px] text-white">{r.name.slice(0, 1)}</span>
+                      </div>
+                      <span>{r.name}</span>
+                    </div>
+                  ))}
+                  <span>{selectedDetail.committeeDecision.createdAt}</span>
+                </div>
+
+                {/* Comments */}
+                <div>
+                  <p className="text-xs text-[#6B7280] mb-2">评论</p>
+                  {selectedDetail.committeeDecision.comments.map((c, idx) => (
+                    <div key={idx} className="flex items-start gap-2 mb-2">
+                      <div className="h-6 w-6 rounded-full bg-[#E5E7EB] flex items-center justify-center shrink-0">
+                        <span className="text-[10px] text-[#6B7280]">{c.author.slice(0, 1)}</span>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-[#111827]">{c.author}</span>
+                          <span className="text-xs text-[#9CA3AF]">{c.time}</span>
+                        </div>
+                        <p className="text-sm text-[#374151]">{c.content}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="flex items-center gap-2 mt-3">
+                    <input
+                      type="text"
+                      placeholder="添加评论..."
+                      className="flex-1 text-sm border border-[#E5E7EB] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
+                    />
+                    <button className="p-2 text-[#2563EB] hover:bg-[#EFF6FF] rounded-lg transition-colors">
+                      <Send className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Verification section */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-1 w-1 rounded-full bg-[#8B5CF6]" />
+              <h2 className="text-base font-semibold text-[#8B5CF6]">验证情况</h2>
+            </div>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden">
+              <div className="border-l-4 border-[#8B5CF6] p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-[#111827]">投后验证评估</h3>
+                  <Badge className="bg-[#F3E8FF] text-[#7C3AED] border-[#DDD6FE]">
+                    {selectedDetail.verification.conclusion}
+                  </Badge>
+                </div>
+                
+                <div className="p-3 bg-[#F9FAFB] rounded-lg mb-4">
+                  <p className="text-sm text-[#374151] leading-relaxed">{selectedDetail.verification.content}</p>
+                </div>
+
+                {/* Creator & Reviewers */}
+                <div className="flex items-center gap-4 text-xs text-[#6B7280] mb-4">
+                  <div className="flex items-center gap-1">
+                    <div className="h-5 w-5 rounded-full bg-[#2563EB] flex items-center justify-center">
+                      <span className="text-[8px] text-white">{selectedDetail.verification.creator.name.slice(0, 1)}</span>
+                    </div>
+                    <span>创建: {selectedDetail.verification.creator.name}</span>
+                  </div>
+                  <span>审批:</span>
+                  {selectedDetail.verification.reviewers.map((r, idx) => (
+                    <div key={idx} className="flex items-center gap-1">
+                      <div className="h-5 w-5 rounded-full bg-[#6B7280] flex items-center justify-center">
+                        <span className="text-[8px] text-white">{r.name.slice(0, 1)}</span>
+                      </div>
+                      <span>{r.name}</span>
+                    </div>
+                  ))}
+                  <span>{selectedDetail.verification.createdAt}</span>
+                </div>
+
+                {/* Comments */}
+                <div>
+                  <p className="text-xs text-[#6B7280] mb-2">评论</p>
+                  <div className="flex items-center gap-2 mt-3">
+                    <input
+                      type="text"
+                      placeholder="添加评论..."
+                      className="flex-1 text-sm border border-[#E5E7EB] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
+                    />
+                    <button className="p-2 text-[#2563EB] hover:bg-[#EFF6FF] rounded-lg transition-colors">
+                      <Send className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Linked terms section */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-1 w-1 rounded-full bg-[#6B7280]" />
+              <h2 className="text-base font-semibold text-[#111827]">该假设所支持的条款</h2>
+            </div>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] p-5">
+              <div className="space-y-3">
+                {selectedDetail.linkedTerms.map((term) => (
+                  <div key={term.id} className="flex items-center justify-between p-3 bg-[#F9FAFB] rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <FileCheck className="h-4 w-4 text-[#6B7280]" />
+                      <div>
+                        <span className="text-sm text-[#111827]">{term.title}</span>
+                        <p className="text-xs text-[#9CA3AF]">ID: {term.termId}</p>
+                      </div>
+                    </div>
+                    <Badge className={cn(
+                      "text-xs",
+                      term.status === "approved" 
+                        ? "bg-[#DCFCE7] text-[#166534]"
+                        : term.status === "rejected"
+                          ? "bg-[#FEE2E2] text-[#991B1B]"
+                          : "bg-[#FEF3C7] text-[#92400E]"
+                    )}>
+                      {term.status === "approved" ? "通过" : term.status === "rejected" ? "拒绝" : "待审"}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
