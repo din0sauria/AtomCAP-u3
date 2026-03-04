@@ -314,6 +314,49 @@ export function ProjectOverview({ project, isNewProject = false }: ProjectOvervi
           </div>
         </div>
 
+        {/* Basic Info Card */}
+        <div className="rounded-xl border border-[#E5E7EB] bg-white p-6">
+          <h3 className="mb-4 text-base font-semibold text-[#111827]">基本信息</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-3 rounded-lg bg-[#F9FAFB] p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+                <User className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-xs text-[#6B7280]">负责人</p>
+                <p className="text-sm font-medium text-[#111827]">张伟</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 rounded-lg bg-[#F9FAFB] p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100">
+                <Briefcase className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-xs text-[#6B7280]">关联策略</p>
+                <p className="text-sm font-medium text-[#111827]">大模型应用</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 rounded-lg bg-[#F9FAFB] p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
+                <Calendar className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-xs text-[#6B7280]">创建日期</p>
+                <p className="text-sm font-medium text-[#111827]">2024-01-15</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 rounded-lg bg-[#F9FAFB] p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-100">
+                <Tag className="h-5 w-5 text-violet-600" />
+              </div>
+              <div>
+                <p className="text-xs text-[#6B7280]">项目状态</p>
+                <p className="text-sm font-medium text-[#111827]">尽调中</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Metric Cards */}
         <div className="grid grid-cols-4 gap-4">
           {defaultMetrics.map((m) => {
