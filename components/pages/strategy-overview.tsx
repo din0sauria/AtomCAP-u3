@@ -144,9 +144,6 @@ export function StrategyOverview({ strategy }: StrategyOverviewProps) {
                 <Badge className={`${info.typeColor} hover:bg-blue-50`}>
                   {info.type}
                 </Badge>
-                <Badge className={isNewStrategy ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-50" : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50"}>
-                  {info.status}
-                </Badge>
               </div>
               <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">
                 {info.description}
