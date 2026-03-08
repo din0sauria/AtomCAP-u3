@@ -1,6 +1,7 @@
 "use client"
 
-import { Download, Eye, FileText, FileSpreadsheet, FileImage, File, FolderOpen, Plus } from "lucide-react"
+import { useState } from "react"
+import { Download, Eye, FileText, FileSpreadsheet, FileImage, File, FolderOpen, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -139,6 +140,7 @@ export function ProjectMaterials({
   // 赛道策略从主题策略继承数据
   const isTrackStrategy = strategyType === "赛道策略"
   const inheritedFromParent = isTrackStrategy && isNewProject && parentStrategyName
+  const [showInheritBanner, setShowInheritBanner] = useState(true)
 
   // 新建的主题策略显示空状态
   if (isNewProject && !inheritedFromParent) {
@@ -165,14 +167,21 @@ export function ProjectMaterials({
     <ScrollArea className="h-full">
       <div className="p-8">
         {/* 赛道策略继承提示 */}
-        {inheritedFromParent && (
+        {inheritedFromParent && showInheritBanner && (
           <div className="mb-4 flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-3">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100">
               <FolderOpen className="h-3.5 w-3.5 text-emerald-600" />
             </div>
-            <p className="text-sm text-emerald-700">
+            <p className="flex-1 text-sm text-emerald-700">
               当前赛道策略的通用材料已从主题策略「{parentStrategyName}」继承，您可以在此基础上进行调整
             </p>
+            <button
+              onClick={() => setShowInheritBanner(false)}
+              className="ml-2 shrink-0 rounded p-0.5 text-emerald-400 transition-colors hover:bg-emerald-100 hover:text-emerald-700"
+              aria-label="关闭提示"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
         )}
         

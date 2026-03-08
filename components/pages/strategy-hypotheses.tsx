@@ -9,6 +9,7 @@ import {
   Eye,
   Trash2,
   User,
+  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -139,6 +140,7 @@ export function StrategyHypotheses({
   // 赛道策略从主题策略继承数据
   const isTrackStrategy = strategyType === "赛道策略"
   const inheritedFromParent = isTrackStrategy && isNewStrategy && parentStrategyName
+  const [showInheritBanner, setShowInheritBanner] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [showDetail, setShowDetail] = useState(false)
@@ -327,14 +329,21 @@ export function StrategyHypotheses({
     <div className="h-full overflow-auto bg-[#F9FAFB]">
       <div className="mx-auto max-w-7xl px-6 py-6">
         {/* 赛道策略继承提示 */}
-        {inheritedFromParent && (
+        {inheritedFromParent && showInheritBanner && (
           <div className="mb-4 flex items-center gap-2 rounded-lg bg-blue-50 border border-blue-200 px-4 py-3">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100">
               <Lightbulb className="h-3.5 w-3.5 text-blue-600" />
             </div>
-            <p className="text-sm text-blue-700">
+            <p className="flex-1 text-sm text-blue-700">
               当前赛道策略的假设清单已从主题策略「{parentStrategyName}」继承，您可以在此基础上进行调整
             </p>
+            <button
+              onClick={() => setShowInheritBanner(false)}
+              className="ml-2 shrink-0 rounded p-0.5 text-blue-400 transition-colors hover:bg-blue-100 hover:text-blue-700"
+              aria-label="关闭提示"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
         )}
         
