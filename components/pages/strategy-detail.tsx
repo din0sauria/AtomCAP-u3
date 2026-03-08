@@ -14,7 +14,7 @@ import { StrategyOverview } from "@/components/pages/strategy-overview"
 import { StrategyHypotheses } from "@/components/pages/strategy-hypotheses"
 import { StrategyTerms } from "@/components/pages/strategy-terms"
 import { ProjectMaterials } from "@/components/pages/project-materials"
-import { type Strategy } from "@/components/pages/strategies-grid"
+import { type Strategy, type StrategyHypothesis, type PendingHypothesis } from "@/components/pages/strategies-grid"
 
 type SubPageKey = "overview" | "hypotheses" | "terms" | "materials"
 
@@ -34,16 +34,32 @@ const subNavItems: SubNavItem[] = [
 interface StrategyDetailProps {
   strategyId: string
   strategy?: Strategy
+  hypotheses: StrategyHypothesis[]
+  onCreatePendingHypothesis: (pending: PendingHypothesis) => void
 }
 
-export function StrategyDetail({ strategyId, strategy }: StrategyDetailProps) {
+export function StrategyDetail({ strategyId, strategy, hypotheses, onCreatePendingHypothesis }: StrategyDetailProps) {
   const [activeSubPage, setActiveSubPage] = useState<SubPageKey>("overview")
   const [collapsed, setCollapsed] = useState(false)
-  const [hypothesesPrefill, setHypothesesPrefill] = useState<{ title: string; content: string; category: string } | undefined>()
+  const [hypothesesPrefill, setHypothesesPrefill] = useState<{
+    title: string
+    direction: string
+    category: string
+    content: string
+    reason: string
+    relatedMaterials: string[]
+  } | undefined>()
   const [termsPrefill, setTermsPrefill] = useState<{ title: string; content: string; category: string } | undefined>()
 
   // 处理从概览页跳转到假设清单
-  const handleNavigateToHypotheses = (prefillData?: { title: string; content: string; category: string }) => {
+  const handleNavigateToHypotheses = (prefillData?: {
+    title: string
+    direction: string
+    category: string
+    content: string
+    reason: string
+    relatedMaterials: string[]
+  }) => {
     setHypothesesPrefill(prefillData)
     setActiveSubPage("hypotheses")
   }
@@ -119,20 +135,29 @@ export function StrategyDetail({ strategyId, strategy }: StrategyDetailProps) {
           />
         ) : activeSubPage === "hypotheses" ? (
           <StrategyHypotheses
+            strategyId={strategyId}
             isNewStrategy={strategyId.startsWith("new-")}
             prefillData={hypothesesPrefill}
             onPrefillUsed={() => setHypothesesPrefill(undefined)}
+            strategyType={strategy?.type}
+            parentStrategyName={strategy?.parentStrategyName}
+            hypotheses={hypotheses}
+            onCreatePendingHypothesis={onCreatePendingHypothesis}
           />
         ) : activeSubPage === "terms" ? (
           <StrategyTerms
             isNewStrategy={strategyId.startsWith("new-")}
             prefillData={termsPrefill}
             onPrefillUsed={() => setTermsPrefill(undefined)}
+            strategyType={strategy?.type}
+            parentStrategyName={strategy?.parentStrategyName}
           />
         ) : (
           <ProjectMaterials
             isNewProject={strategyId.startsWith("new-")}
             project={{ name: strategy?.name }}
+            strategyType={strategy?.type}
+            parentStrategyName={strategy?.parentStrategyName}
           />
         )}
       </div>

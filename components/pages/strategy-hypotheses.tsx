@@ -9,10 +9,31 @@ import {
   Eye,
   Trash2,
   User,
+  X,
+  FileText,
+  Link2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
+
+// 通用材料数据（与 project-materials 共享）
+const availableMaterials = [
+  { id: "m1", name: "GPU_AI芯片行业全景报告_2024", format: "PDF" },
+  { id: "m2", name: "全球算力基础设施市场规模分析", format: "PDF" },
+  { id: "m3", name: "主流AI训练框架技术对比", format: "DOCX" },
+  { id: "m4", name: "云服务商GPU算力价格对比表", format: "XLSX" },
+  { id: "m5", name: "AI基础设施投融资趋势报告_2023-2024", format: "PDF" },
+  { id: "m7", name: "大模型训练成本结构分析", format: "XLSX" },
+  { id: "m10", name: "国内外AI基础软件生态图谱", format: "PDF" },
+]
 
 /* ------------------------------------------------------------------ */
 /*  Data types                                                         */
@@ -121,31 +142,82 @@ const hypothesisDetails: Record<string, HypothesisDetail> = {
 /* ------------------------------------------------------------------ */
 /*  Main Component                                                     */
 /* ------------------------------------------------------------------ */
-interface StrategyHypothesesProps {
-  isNewStrategy?: boolean
-  prefillData?: { title: string; content: string; category: string }
-  onPrefillUsed?: () => void
+interface HypothesisPrefillData {
+  title: string
+  direction: string
+  category: string
+  content: string
+  reason: string
+  relatedMaterials: string[]
 }
 
-export function StrategyHypotheses({ isNewStrategy = false, prefillData, onPrefillUsed }: StrategyHypothesesProps) {
+interface StrategyHypothesesProps {
+  strategyId: string
+  isNewStrategy?: boolean
+  prefillData?: HypothesisPrefillData
+  onPrefillUsed?: () => void
+  strategyType?: "主题策略" | "赛道策略"
+  parentStrategyName?: string
+  hypotheses: import("./strategies-grid").StrategyHypothesis[]
+  onCreatePendingHypothesis: (pending: import("./strategies-grid").PendingHypothesis) => void
+}
+
+export function StrategyHypotheses({ 
+  strategyId,
+  isNewStrategy = false, 
+  prefillData, 
+  onPrefillUsed,
+  strategyType,
+  parentStrategyName,
+  hypotheses,
+  onCreatePendingHypothesis,
+}: StrategyHypothesesProps) {
+  // 赛道策略从主题策略继承数据
+  const isTrackStrategy = strategyType === "赛道策略"
+  const inheritedFromParent = isTrackStrategy && isNewStrategy && parentStrategyName
+  const [showInheritBanner, setShowInheritBanner] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [showDetail, setShowDetail] = useState(false)
-  const [showCreateForm, setShowCreateForm] = useState(false)
+  
+  // 弹窗创建表单状态
+  const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [formTitle, setFormTitle] = useState("")
-  const [formContent, setFormContent] = useState("")
+  const [formDirection, setFormDirection] = useState("")
   const [formCategory, setFormCategory] = useState("")
+  const [formContent, setFormContent] = useState("")
+  const [formReason, setFormReason] = useState("")
+  const [formMaterials, setFormMaterials] = useState<string[]>([])
 
   // 处理预填数据
-  if (prefillData && !showCreateForm) {
+  if (prefillData && !showCreateDialog) {
     setFormTitle(prefillData.title)
-    setFormContent(prefillData.content)
+    setFormDirection(prefillData.direction)
     setFormCategory(prefillData.category)
-    setShowCreateForm(true)
+    setFormContent(prefillData.content)
+    setFormReason(prefillData.reason)
+    setFormMaterials(prefillData.relatedMaterials)
+    setShowCreateDialog(true)
     onPrefillUsed?.()
   }
 
-  const filteredData = hypothesisTableData.filter((item) => {
+  // 合并初始数据和从 page.tsx 传来的持久化数据
+  const allHypotheses: HypothesisTableItem[] = [
+    // 转换持久化的假设数据为表格格式
+    ...hypotheses.map((h) => ({
+      id: h.id,
+      direction: h.direction,
+      category: h.category,
+      name: h.name,
+      owner: h.owner,
+      createdAt: h.createdAt,
+      updatedAt: h.updatedAt,
+    })),
+    // 如果是继承场景或已有数据，加上初始数据
+    ...(inheritedFromParent || !isNewStrategy ? hypothesisTableData : []),
+  ]
+
+  const filteredData = allHypotheses.filter((item) => {
     const query = searchQuery.toLowerCase()
     return (
       item.direction.toLowerCase().includes(query) ||
@@ -170,89 +242,55 @@ export function StrategyHypotheses({ isNewStrategy = false, prefillData, onPrefi
   function handleDelete(id: string) {
     console.log("[v0] Delete strategy hypothesis:", id)
   }
-
-  // 创建假设表单
-  if (showCreateForm) {
-    return (
-      <div className="h-full overflow-auto bg-[#F9FAFB]">
-        <div className="mx-auto max-w-3xl px-6 py-6">
-          <button
-            onClick={() => {
-              setShowCreateForm(false)
-              setFormTitle("")
-              setFormContent("")
-              setFormCategory("")
-            }}
-            className="mb-4 inline-flex items-center gap-2 text-sm text-[#6B7280] hover:text-[#111827] transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            返回假设清单
-          </button>
-
-          <div className="bg-white rounded-xl border border-[#E5E7EB] p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50">
-                <Lightbulb className="h-5 w-5 text-amber-600" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-[#111827]">创建投资假设</h1>
-                <p className="text-sm text-[#6B7280]">AI已为您预填了推荐内容，您可以根据需要进行修改</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1.5">假设名称</label>
-                <Input
-                  value={formTitle}
-                  onChange={(e) => setFormTitle(e.target.value)}
-                  placeholder="输入假设名称"
-                  className="h-10"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1.5">假设类别</label>
-                <Input
-                  value={formCategory}
-                  onChange={(e) => setFormCategory(e.target.value)}
-                  placeholder="输入假设类别"
-                  className="h-10"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1.5">假设内容</label>
-                <textarea
-                  value={formContent}
-                  onChange={(e) => setFormContent(e.target.value)}
-                  placeholder="输入假设详细内容"
-                  rows={6}
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
-                />
-              </div>
-              <div className="flex justify-end gap-3 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowCreateForm(false)
-                    setFormTitle("")
-                    setFormContent("")
-                    setFormCategory("")
-                  }}
-                >
-                  取消
-                </Button>
-                <Button className="bg-[#2563EB] hover:bg-[#1D4ED8]">
-                  创建假设
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  
+  function resetForm() {
+    setFormTitle("")
+    setFormDirection("")
+    setFormCategory("")
+    setFormContent("")
+    setFormReason("")
+    setFormMaterials([])
+  }
+  
+  function handleCreateSubmit() {
+    // 创建变更请求
+    const pending: import("./strategies-grid").PendingHypothesis = {
+      id: `pending-hyp-${Date.now()}`,
+      hypothesis: {
+        strategyId,
+        direction: formDirection,
+        category: formCategory,
+        name: formTitle,
+        content: formContent,
+        reason: formReason,
+        relatedMaterials: formMaterials,
+        owner: "张伟",
+        createdAt: new Date().toISOString().split("T")[0],
+        updatedAt: new Date().toISOString().split("T")[0],
+      },
+      changeId: `CHG-${Date.now().toString().slice(-6)}`,
+      changeName: `新建假设: ${formTitle}`,
+      initiator: { id: "zhangwei", name: "张伟", initials: "张伟" },
+      initiatedAt: new Date().toISOString().split("T")[0],
+      reviewers: [{ id: "lisi", name: "李四", initials: "李四" }],
+    }
+    
+    // 关闭弹窗，跳转到变更请求页面
+    setShowCreateDialog(false)
+    resetForm()
+    onCreatePendingHypothesis(pending)
+  }
+  
+  function toggleMaterial(materialId: string) {
+    setFormMaterials((prev) =>
+      prev.includes(materialId)
+        ? prev.filter((id) => id !== materialId)
+        : [...prev, materialId]
     )
   }
 
-  if (isNewStrategy) {
+  // 新建的主题策略且没有已审批的假设时显示空状态
+  if (isNewStrategy && !inheritedFromParent && hypotheses.length === 0) {
     return (
       <div className="flex h-full items-center justify-center bg-[#F9FAFB]">
         <div className="text-center max-w-md px-6">
@@ -264,7 +302,7 @@ export function StrategyHypotheses({ isNewStrategy = false, prefillData, onPrefi
             这是一个新创建的策略，还没有添加任何假设。点击下方按钮开始创建您的第一个投资假设。
           </p>
           <button
-            onClick={() => setShowCreateForm(true)}
+            onClick={() => setShowCreateDialog(true)}
             className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8]"
           >
             <Plus className="h-4 w-4" />
@@ -314,6 +352,25 @@ export function StrategyHypotheses({ isNewStrategy = false, prefillData, onPrefi
   return (
     <div className="h-full overflow-auto bg-[#F9FAFB]">
       <div className="mx-auto max-w-7xl px-6 py-6">
+        {/* 赛道策略继承提示 */}
+        {inheritedFromParent && showInheritBanner && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-blue-50 border border-blue-200 px-4 py-3">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100">
+              <Lightbulb className="h-3.5 w-3.5 text-blue-600" />
+            </div>
+            <p className="flex-1 text-sm text-blue-700">
+              当前赛道策略的假设清单已从主题策略「{parentStrategyName}」继承，您可以在此基础上进行调整
+            </p>
+            <button
+              onClick={() => setShowInheritBanner(false)}
+              className="ml-2 shrink-0 rounded p-0.5 text-blue-400 transition-colors hover:bg-blue-100 hover:text-blue-700"
+              aria-label="关闭提示"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+        
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-[#111827]">假设清单</h1>
@@ -405,6 +462,138 @@ export function StrategyHypotheses({ isNewStrategy = false, prefillData, onPrefi
           )}
         </div>
       </div>
+      
+      {/* 创建假设弹窗 */}
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50">
+                <Lightbulb className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-[#111827]">创建投资假设</div>
+                <p className="text-sm font-normal text-[#6B7280]">AI已为您预填了推荐内容，您可以根据需要进行修改</p>
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 mt-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-[#374151] mb-1.5">假设方向</label>
+                <Input
+                  value={formDirection}
+                  onChange={(e) => setFormDirection(e.target.value)}
+                  placeholder="如：技术攻关、市场判断"
+                  className="h-10"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#374151] mb-1.5">假设类别</label>
+                <Input
+                  value={formCategory}
+                  onChange={(e) => setFormCategory(e.target.value)}
+                  placeholder="如：算力与芯片、市场规模"
+                  className="h-10"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-[#374151] mb-1.5">假设名称</label>
+              <Input
+                value={formTitle}
+                onChange={(e) => setFormTitle(e.target.value)}
+                placeholder="输入假设名称"
+                className="h-10"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-[#374151] mb-1.5">假设简介</label>
+              <textarea
+                value={formContent}
+                onChange={(e) => setFormContent(e.target.value)}
+                placeholder="输入假设详细内容"
+                rows={4}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-[#374151] mb-1.5">推荐理由</label>
+              <textarea
+                value={formReason}
+                onChange={(e) => setFormReason(e.target.value)}
+                placeholder="说明为什么推荐这个假设"
+                rows={3}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-[#374151] mb-2">
+                <div className="flex items-center gap-2">
+                  <Link2 className="h-4 w-4 text-[#6B7280]" />
+                  关联通用材料
+                </div>
+              </label>
+              <div className="rounded-lg border border-[#E5E7EB] p-3 bg-[#F9FAFB] max-h-40 overflow-y-auto">
+                <div className="space-y-2">
+                  {availableMaterials.map((material) => (
+                    <label
+                      key={material.id}
+                      className={cn(
+                        "flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors",
+                        formMaterials.includes(material.id)
+                          ? "bg-blue-50 border border-blue-200"
+                          : "hover:bg-white border border-transparent"
+                      )}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formMaterials.includes(material.id)}
+                        onChange={() => toggleMaterial(material.id)}
+                        className="h-4 w-4 rounded border-gray-300 text-[#2563EB] focus:ring-[#2563EB]"
+                      />
+                      <FileText className="h-4 w-4 text-[#6B7280] shrink-0" />
+                      <span className="text-sm text-[#374151] truncate flex-1">{material.name}</span>
+                      <Badge className="bg-gray-50 text-gray-600 border-gray-200 text-[10px] shrink-0">
+                        {material.format}
+                      </Badge>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              {formMaterials.length > 0 && (
+                <p className="mt-2 text-xs text-[#6B7280]">
+                  已选择 {formMaterials.length} 个材料
+                </p>
+              )}
+            </div>
+            
+            <div className="flex justify-end gap-3 pt-4 border-t border-[#E5E7EB]">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCreateDialog(false)
+                  resetForm()
+                }}
+              >
+                取消
+              </Button>
+              <Button 
+                className="bg-[#2563EB] hover:bg-[#1D4ED8]"
+                onClick={handleCreateSubmit}
+                disabled={!formTitle.trim() || !formDirection.trim()}
+              >
+                创建假设
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

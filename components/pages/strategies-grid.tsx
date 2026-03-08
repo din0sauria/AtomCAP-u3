@@ -67,6 +67,30 @@ export interface PendingStrategy {
   reviewers: { id: string; name: string; initials: string }[]
 }
 
+export interface StrategyHypothesis {
+  id: string
+  strategyId: string
+  direction: string
+  category: string
+  name: string
+  content: string
+  reason: string
+  relatedMaterials: string[]
+  owner: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface PendingHypothesis {
+  id: string
+  hypothesis: Omit<StrategyHypothesis, "id">
+  changeId: string
+  changeName: string
+  initiator: { id: string; name: string; initials: string }
+  initiatedAt: string
+  reviewers: { id: string; name: string; initials: string }[]
+}
+
 export const initialStrategies: Strategy[] = [
   {
     id: "1",
