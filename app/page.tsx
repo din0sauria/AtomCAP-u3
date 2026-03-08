@@ -4,7 +4,7 @@ import { useState } from "react"
 import { AppTopbar, type TopNavKey } from "@/components/app-topbar"
 import { Dashboard } from "@/components/pages/dashboard"
 import { ProjectsGrid, type Project, type PendingProject, initialProjects } from "@/components/pages/projects-grid"
-import { StrategiesGrid, type Strategy, type PendingStrategy, initialStrategies } from "@/components/pages/strategies-grid"
+import { StrategiesGrid, type Strategy, type PendingStrategy, type StrategyHypothesis, type PendingHypothesis, initialStrategies } from "@/components/pages/strategies-grid"
 import { ProjectDetail } from "@/components/pages/project-detail"
 import { StrategyDetail } from "@/components/pages/strategy-detail"
 import { ChangeRequests } from "@/components/pages/change-requests"
@@ -29,6 +29,9 @@ export default function Page() {
   // Workflow phases state per project - keyed by projectId
   const [projectPhases, setProjectPhases] = useState<Record<string, Phase[]>>({})
   const [pendingPhases, setPendingPhases] = useState<PendingPhase[]>([])
+  // Strategy hypotheses state - keyed by strategyId
+  const [strategyHypotheses, setStrategyHypotheses] = useState<Record<string, StrategyHypothesis[]>>({})
+  const [pendingHypotheses, setPendingHypotheses] = useState<PendingHypothesis[]>([])
 
   const activeNav: TopNavKey | null =
     view.type === "dashboard"
@@ -149,6 +152,38 @@ export default function Page() {
     setPendingPhases(pendingPhases.filter((p) => p.id !== id))
   }
 
+  // Hypothesis change request handlers
+  function handleCreatePendingHypothesis(pending: PendingHypothesis) {
+    setPendingHypotheses([pending, ...pendingHypotheses])
+    setView({ type: "change-requests" })
+  }
+
+  function handleApproveHypothesis(id: string) {
+    const pending = pendingHypotheses.find((p) => p.id === id)
+    if (pending) {
+      const { strategyId } = pending.hypothesis
+      const newHypothesis: StrategyHypothesis = {
+        id: `hyp-${Date.now()}`,
+        ...pending.hypothesis,
+      }
+      const currentHypotheses = strategyHypotheses[strategyId] || []
+      setStrategyHypotheses({
+        ...strategyHypotheses,
+        [strategyId]: [newHypothesis, ...currentHypotheses],
+      })
+      setPendingHypotheses(pendingHypotheses.filter((p) => p.id !== id))
+    }
+  }
+
+  function handleRejectHypothesis(id: string) {
+    setPendingHypotheses(pendingHypotheses.filter((p) => p.id !== id))
+  }
+
+  // Helper to get hypotheses for a strategy
+  function getHypothesesForStrategy(strategyId: string): StrategyHypothesis[] {
+    return strategyHypotheses[strategyId] || []
+  }
+
   // Helper to get phases for a project
   function getPhasesForProject(projectId: string): Phase[] {
     return projectPhases[projectId] || []
@@ -193,12 +228,15 @@ export default function Page() {
             pendingStrategies={pendingStrategies}
             pendingProjects={pendingProjects}
             pendingPhases={pendingPhases}
+            pendingHypotheses={pendingHypotheses}
             onApproveStrategy={handleApproveStrategy}
             onRejectStrategy={handleRejectStrategy}
             onApproveProject={handleApproveProject}
             onRejectProject={handleRejectProject}
             onApprovePhase={handleApprovePhase}
             onRejectPhase={handleRejectPhase}
+            onApproveHypothesis={handleApproveHypothesis}
+            onRejectHypothesis={handleRejectHypothesis}
           />
         )}
         {view.type === "project-detail" && (
@@ -214,6 +252,8 @@ export default function Page() {
           <StrategyDetail 
             strategyId={view.strategyId} 
             strategy={strategies.find((s) => s.id === view.strategyId)}
+            hypotheses={getHypothesesForStrategy(view.strategyId)}
+            onCreatePendingHypothesis={handleCreatePendingHypothesis}
           />
         )}
       </main>

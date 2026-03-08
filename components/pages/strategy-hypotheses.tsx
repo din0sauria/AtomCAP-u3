@@ -10,7 +10,6 @@ import {
   Trash2,
   User,
   X,
-  Check,
   FileText,
   Link2,
 } from "lucide-react"
@@ -153,19 +152,25 @@ interface HypothesisPrefillData {
 }
 
 interface StrategyHypothesesProps {
+  strategyId: string
   isNewStrategy?: boolean
   prefillData?: HypothesisPrefillData
   onPrefillUsed?: () => void
   strategyType?: "主题策略" | "赛道策略"
   parentStrategyName?: string
+  hypotheses: import("./strategies-grid").StrategyHypothesis[]
+  onCreatePendingHypothesis: (pending: import("./strategies-grid").PendingHypothesis) => void
 }
 
 export function StrategyHypotheses({ 
+  strategyId,
   isNewStrategy = false, 
   prefillData, 
   onPrefillUsed,
   strategyType,
   parentStrategyName,
+  hypotheses,
+  onCreatePendingHypothesis,
 }: StrategyHypothesesProps) {
   // 赛道策略从主题策略继承数据
   const isTrackStrategy = strategyType === "赛道策略"
@@ -183,13 +188,6 @@ export function StrategyHypotheses({
   const [formContent, setFormContent] = useState("")
   const [formReason, setFormReason] = useState("")
   const [formMaterials, setFormMaterials] = useState<string[]>([])
-  
-  // 变更请求状态
-  const [showChangeRequest, setShowChangeRequest] = useState(false)
-  const [pendingHypothesis, setPendingHypothesis] = useState<HypothesisTableItem | null>(null)
-  
-  // 假设列表数据（本地状态）
-  const [hypothesesList, setHypothesesList] = useState<HypothesisTableItem[]>(hypothesisTableData)
 
   // 处理预填数据
   if (prefillData && !showCreateDialog) {
@@ -203,7 +201,23 @@ export function StrategyHypotheses({
     onPrefillUsed?.()
   }
 
-  const filteredData = hypothesesList.filter((item) => {
+  // 合并初始数据和从 page.tsx 传来的持久化数据
+  const allHypotheses: HypothesisTableItem[] = [
+    // 转换持久化的假设数据为表格格式
+    ...hypotheses.map((h) => ({
+      id: h.id,
+      direction: h.direction,
+      category: h.category,
+      name: h.name,
+      owner: h.owner,
+      createdAt: h.createdAt,
+      updatedAt: h.updatedAt,
+    })),
+    // 如果是继承场景或已有数据，加上初始数据
+    ...(inheritedFromParent || !isNewStrategy ? hypothesisTableData : []),
+  ]
+
+  const filteredData = allHypotheses.filter((item) => {
     const query = searchQuery.toLowerCase()
     return (
       item.direction.toLowerCase().includes(query) ||
@@ -239,37 +253,32 @@ export function StrategyHypotheses({
   }
   
   function handleCreateSubmit() {
-    // 创建新假设对象
-    const newHypothesis: HypothesisTableItem = {
-      id: `h-new-${Date.now()}`,
-      direction: formDirection,
-      category: formCategory,
-      name: formTitle,
-      owner: "张伟", // 当前用户
-      createdAt: new Date().toISOString().split("T")[0],
-      updatedAt: new Date().toISOString().split("T")[0],
+    // 创建变更请求
+    const pending: import("./strategies-grid").PendingHypothesis = {
+      id: `pending-hyp-${Date.now()}`,
+      hypothesis: {
+        strategyId,
+        direction: formDirection,
+        category: formCategory,
+        name: formTitle,
+        content: formContent,
+        reason: formReason,
+        relatedMaterials: formMaterials,
+        owner: "张伟",
+        createdAt: new Date().toISOString().split("T")[0],
+        updatedAt: new Date().toISOString().split("T")[0],
+      },
+      changeId: `CHG-${Date.now().toString().slice(-6)}`,
+      changeName: `新建假设: ${formTitle}`,
+      initiator: { id: "zhangwei", name: "张伟", initials: "张伟" },
+      initiatedAt: new Date().toISOString().split("T")[0],
+      reviewers: [{ id: "lisi", name: "李四", initials: "李四" }],
     }
     
-    // 关闭创建弹窗，显示变更请求
+    // 关闭弹窗，跳转到变更请求页面
     setShowCreateDialog(false)
-    setPendingHypothesis(newHypothesis)
-    setShowChangeRequest(true)
-  }
-  
-  function handleAcceptChange() {
-    if (pendingHypothesis) {
-      // 将新假设添加到列表
-      setHypothesesList((prev) => [pendingHypothesis, ...prev])
-    }
-    setShowChangeRequest(false)
-    setPendingHypothesis(null)
     resetForm()
-  }
-  
-  function handleRejectChange() {
-    setShowChangeRequest(false)
-    setPendingHypothesis(null)
-    resetForm()
+    onCreatePendingHypothesis(pending)
   }
   
   function toggleMaterial(materialId: string) {
@@ -280,8 +289,8 @@ export function StrategyHypotheses({
     )
   }
 
-  // 新建的主题策略显示空状态
-  if (isNewStrategy && !inheritedFromParent) {
+  // 新建的主题策略且没有已审批的假设时显示空状态
+  if (isNewStrategy && !inheritedFromParent && hypotheses.length === 0) {
     return (
       <div className="flex h-full items-center justify-center bg-[#F9FAFB]">
         <div className="text-center max-w-md px-6">
@@ -583,67 +592,6 @@ export function StrategyHypotheses({
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
-      
-      {/* 变更请求确认弹窗 */}
-      <Dialog open={showChangeRequest} onOpenChange={setShowChangeRequest}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50">
-                <FileText className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <div className="text-lg font-bold text-[#111827]">变更请求</div>
-                <p className="text-sm font-normal text-[#6B7280]">新建假设需要您的确认</p>
-              </div>
-            </DialogTitle>
-          </DialogHeader>
-          
-          {pendingHypothesis && (
-            <div className="mt-4 space-y-4">
-              <div className="rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 shrink-0">
-                    <Lightbulb className="h-4 w-4 text-amber-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-semibold text-[#111827] mb-1">{pendingHypothesis.name}</h4>
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-[10px]">
-                        {pendingHypothesis.direction}
-                      </Badge>
-                      <Badge className="bg-gray-50 text-gray-600 border-gray-200 text-[10px]">
-                        {pendingHypothesis.category}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-[#6B7280]">
-                      创建者: {pendingHypothesis.owner} | 创建时间: {pendingHypothesis.createdAt}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex justify-end gap-3 pt-2">
-                <Button
-                  variant="outline"
-                  onClick={handleRejectChange}
-                  className="text-red-600 border-red-200 hover:bg-red-50"
-                >
-                  <X className="h-4 w-4 mr-1" />
-                  拒绝
-                </Button>
-                <Button 
-                  className="bg-emerald-600 hover:bg-emerald-700"
-                  onClick={handleAcceptChange}
-                >
-                  <Check className="h-4 w-4 mr-1" />
-                  接受
-                </Button>
-              </div>
-            </div>
-          )}
         </DialogContent>
       </Dialog>
     </div>

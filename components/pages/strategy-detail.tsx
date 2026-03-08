@@ -14,7 +14,7 @@ import { StrategyOverview } from "@/components/pages/strategy-overview"
 import { StrategyHypotheses } from "@/components/pages/strategy-hypotheses"
 import { StrategyTerms } from "@/components/pages/strategy-terms"
 import { ProjectMaterials } from "@/components/pages/project-materials"
-import { type Strategy } from "@/components/pages/strategies-grid"
+import { type Strategy, type StrategyHypothesis, type PendingHypothesis } from "@/components/pages/strategies-grid"
 
 type SubPageKey = "overview" | "hypotheses" | "terms" | "materials"
 
@@ -34,9 +34,11 @@ const subNavItems: SubNavItem[] = [
 interface StrategyDetailProps {
   strategyId: string
   strategy?: Strategy
+  hypotheses: StrategyHypothesis[]
+  onCreatePendingHypothesis: (pending: PendingHypothesis) => void
 }
 
-export function StrategyDetail({ strategyId, strategy }: StrategyDetailProps) {
+export function StrategyDetail({ strategyId, strategy, hypotheses, onCreatePendingHypothesis }: StrategyDetailProps) {
   const [activeSubPage, setActiveSubPage] = useState<SubPageKey>("overview")
   const [collapsed, setCollapsed] = useState(false)
   const [hypothesesPrefill, setHypothesesPrefill] = useState<{
@@ -133,11 +135,14 @@ export function StrategyDetail({ strategyId, strategy }: StrategyDetailProps) {
           />
         ) : activeSubPage === "hypotheses" ? (
           <StrategyHypotheses
+            strategyId={strategyId}
             isNewStrategy={strategyId.startsWith("new-")}
             prefillData={hypothesesPrefill}
             onPrefillUsed={() => setHypothesesPrefill(undefined)}
             strategyType={strategy?.type}
             parentStrategyName={strategy?.parentStrategyName}
+            hypotheses={hypotheses}
+            onCreatePendingHypothesis={onCreatePendingHypothesis}
           />
         ) : activeSubPage === "terms" ? (
           <StrategyTerms
