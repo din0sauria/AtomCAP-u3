@@ -609,9 +609,15 @@ export function Workflow({
     if (type === "hypothesis-suggestions") {
       setFullPageView("hypothesis-generation")
       setIsGenerating(false)
-      setGenerationComplete(false)
       setThinkingSteps([])
-      setGeneratedSuggestions([])
+      // Restore saved suggestions if available, otherwise reset
+      if (savedGeneratedSuggestions && savedGeneratedSuggestions.length > 0) {
+        setGeneratedSuggestions(savedGeneratedSuggestions)
+        setGenerationComplete(true)
+      } else {
+        setGeneratedSuggestions([])
+        setGenerationComplete(false)
+      }
       return
     }
     
@@ -1195,7 +1201,7 @@ export function Workflow({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#374151] mb-1.5">假设类别</label>
+                  <label className="block text-sm font-medium text-[#374151] mb-1.5">假���类别</label>
                   <Input
                     value={formData.category}
                     onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
