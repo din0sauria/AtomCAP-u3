@@ -30,6 +30,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
@@ -1167,9 +1168,11 @@ export function Workflow({
                 </div>
                 <div>
                   <div className="text-xl font-bold text-[#111827]">创建项目假设</div>
-                  <p className="text-sm font-normal text-[#6B7280]">基于AI建议创建新的项目假设</p>
                 </div>
               </DialogTitle>
+              <DialogDescription className="text-sm text-[#6B7280]">
+                基于AI建议创建新的项目假设，包含价值点和风险点分析
+              </DialogDescription>
             </DialogHeader>
             
             <div className="space-y-6 mt-4">
