@@ -399,6 +399,12 @@ const aiInfrastructureHypotheses: HypothesisTableItem[] = [
   },
   {
     id: "ai-h7",
+
+
+
+
+
+
     direction: "团队能力",
     category: "创始人",
     name: "创始人具备丰富的AI产品商业化经验。",
