@@ -817,21 +817,21 @@ export function Workflow({
                   id: "sh0-1",
                   direction: "团队能力",
                   category: "创始人",
-                  name: "创始人具有扎实的人工智能学术背景。",
+                  name: "创始人具有扎实的人工智能学术背景",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp0-1", title: "创始人闫俊杰拥有博士学位，在人工智能领域具有较强学术能力。", evidenceDescription: "创始人拥有博士学位，在AI领域发表过15篇高质量学术论文。", evidenceMaterialIds: ["m1"], analysisContent: "创始人拥有博士学位，为该领域高学历人才。在人工智能领域发表过15篇高质量学术论文，其中5篇发表在顶级期刊上。曾获得国家自然科学基金青年项目资助，具备扎实的理论基础和研究能力。" },
                     { id: "vp0-2", title: "创始人的学术成功具有较高影响力。", evidenceDescription: "创始人闫俊杰在Google Scholar上的H指数为8，总引用次数超过500次，证明其研究成果具有较高的学术影响力。", evidenceMaterialIds: ["m1"], analysisContent: "创始人闫俊杰的H指数达到8，在同龄学者中处于较高水平。其研究成果被多家知名企业引用并应用于实际产品中，证明其学术研究具有很高的实用价值。" },
                   ],
                   riskPoints: [
-                    { id: "rp0-1", title: "学术能力与商业转化能力有可能脱节。", evidenceDescription: "学术背景较强但商业转化经验相对有限，需关注从学术到产业的过渡能力。", evidenceMaterialIds: ["m1"], analysisContent: "需创始人在商业化方面的经验主要集中在技术转让和专利授权领域，尚未有过完整的产品商业化经历。建议关注其团队中是否有强有力的商业运营搭档补足这一短板。" },
+                    { id: "rp0-1", title: "学术能力与商业转化能力有可能脱节", evidenceDescription: "学术背景较强但商业转化经验相对有限，需关注从学术到产业的过渡能力。", evidenceMaterialIds: ["m1"], analysisContent: "需创始人在商业化方面的经验主要集中在技术转让和专利授权领域，尚未有过完整的产品商业化经历。建议关注其团队中是否有强有力的商业运营搭档补足这一短板。" },
                   ],
                 },
                 {
                   id: "sh0-2",
                   direction: "团队能力",
                   category: "创始人",
-                  name: "创始人具备丰富的AI产品商业化经验。",
+                  name: "创始人具备丰富的AI产品商业化经验",
                   isExisting: true,
                   valuePoints: [
                     { id: "vp3", title: "迭代速度快", evidenceDescription: "产品更新周期短于行业平均", evidenceMaterialIds: ["m1", "m3"], analysisContent: "快速迭代能力体现团队执行力和技术实力。" },
@@ -844,7 +844,7 @@ export function Workflow({
                   id: "sh0-3",
                   direction: "团队能力",
                   category: "创始人",
-                  name: "创始人具备出较强的团队凝聚力。",
+                  name: "创始人具备出较强的团队凝聚力",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp3", title: "迭代速度快", evidenceDescription: "产品更新周期短于行业平均", evidenceMaterialIds: ["m1", "m3"], analysisContent: "快速迭代能力体现团队执行力和技术实力。" },
@@ -872,7 +872,7 @@ export function Workflow({
                   id: "sh1-1",
                   direction: "技术攻关",
                   category: "技术壁垒",
-                  name: "专利布局完善，能够形成技术壁垒。",
+                  name: "专利布局完善，能够形成技术壁垒",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp1", title: "专利布局完善，覆盖领域广。", evidenceDescription: "公司在核心技术领域拥有20+项专利", evidenceMaterialIds: ["m1"], analysisContent: "专利覆盖核心算法、模型架构和数据处理流程，形成完整的技术护城河。" },
@@ -885,7 +885,7 @@ export function Workflow({
                   id: "sh1-2",
                   direction: "技术攻关",
                   category: "团队稳定性",
-                  name: "技术团队核心成员稳定性，人才流失少，能够长期支撑高水平研发工作。",
+                  name: "技术团队核心成员稳定性，人才流失少，能够长期支撑高水平研发工作",
                   isExisting: true,
                   valuePoints: [
                     { id: "vp2", title: "技术团队存续时间长。", evidenceDescription: "核心技术人员平均在职时间超过3年。", evidenceMaterialIds: ["m2"], analysisContent: "团队稳定性有助于技术积累和持续高水平研发。" },
@@ -898,7 +898,7 @@ export function Workflow({
                   id: "sh1-3",
                   direction: "技术攻关",
                   category: "技术迭代",
-                  name: "技术迭代能力强，能迅速响应市场变化。",
+                  name: "技术迭代能力强，能迅速响应市场变化",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp3", title: "迭代速度快", evidenceDescription: "产品更新周期短于行业平均", evidenceMaterialIds: ["m1", "m3"], analysisContent: "快速迭代能力体现团队执行力和技术实力。" },
@@ -925,7 +925,7 @@ export function Workflow({
                   id: "sh2-1",
                   direction: "市场判断",
                   category: "市场规模",
-                  name: "国内市场TAM规模稳步增长，发展前景好。",
+                  name: "国内市场TAM规模稳步增长，发展前景好",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp4", title: "市场增长潜力大", evidenceDescription: "AI基础设施市场年复合增长率超30%", evidenceMaterialIds: ["m3", "m4"], analysisContent: "市场处于快速增长期，先发优势明显。" },
@@ -938,7 +938,7 @@ export function Workflow({
                   id: "sh2-2",
                   direction: "市场判断",
                   category: "市场渗透",
-                  name: "多模态大模型市场需求增长。",
+                  name: "多模态大模型市场需求增长",
                   isExisting: true,
                   valuePoints: [
                     { id: "vp5", title: "多模态需求增长", evidenceDescription: "企业对多模态AI解决方案需求上升", evidenceMaterialIds: ["m3"], analysisContent: "多模态融合是行业趋势，市场空间广阔。" },
@@ -966,7 +966,7 @@ export function Workflow({
                   id: "sh3-1",
                   direction: "商业模式",
                   category: "盈利能力",
-                  name: "单位经济模型健康，LTV/CAC比值大于3。",
+                  name: "单位经济模型健康，LTV/CAC比值大于3",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp6", title: "单位经济模型健康", evidenceDescription: "LTV/CAC比值大于3", evidenceMaterialIds: ["m5", "m6"], analysisContent: "客户获取成本合理，具备规模化盈利基础。" },
@@ -979,7 +979,7 @@ export function Workflow({
                   id: "sh3-2",
                   direction: "商业模式",
                   category: "成本结构",
-                  name: "毛利率稳步提升，足够支撑公司规模扩张。",
+                  name: "毛利率稳步提升，足够支撑公司规模扩张",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp7", title: "规模效应显现", evidenceDescription: "收入增长带动毛利率提升", evidenceMaterialIds: ["m5", "m6"], analysisContent: "规模扩大后边际成本下降。" },
@@ -1005,7 +1005,7 @@ export function Workflow({
                   id: "sh4-1",
                   direction: "团队能力",
                   category: "执行力",
-                  name: "团队执行力强，里程碑达成率高于80%。",
+                  name: "团队执行力强，里程碑达成率高于80%",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp8", title: "里程碑达成率高", evidenceDescription: "过往融资轮次里程碑达成率超85%", evidenceMaterialIds: ["m7"], analysisContent: "团队具备良好的目标管理和执行能力。" },
@@ -1018,7 +1018,7 @@ export function Workflow({
                   id: "sh4-2",
                   direction: "团队能力",
                   category: "组织管理",
-                  name: "组织扩张能力强，管理经验丰富。",
+                  name: "组织扩张能力强，管理经验丰富",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp9", title: "管理经验丰富", evidenceDescription: "核心管理层有大厂背景", evidenceMaterialIds: ["m7"], analysisContent: "具备大规模团队管理经验。" },
@@ -1045,7 +1045,7 @@ export function Workflow({
                   id: "sh5-1",
                   direction: "退出策略",
                   category: "退出可行性",
-                  name: "IPO退出可行性高，具备完善退出机制。",
+                  name: "IPO退出可行性高，具备完善退出机制",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp10", title: "IPO预期明确", evidenceDescription: "公司已启动上市辅导", evidenceMaterialIds: ["m8"], analysisContent: "退出路径清晰，时间节点相对确定。" },
@@ -1058,7 +1058,7 @@ export function Workflow({
                   id: "sh5-2",
                   direction: "退出策略",
                   category: "退出可行性",
-                  name: "并购退出可行性高，具备完善退出机制。",
+                  name: "并购退出可行性高，具备完善退出机制",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp11", title: "战略价值高", evidenceDescription: "技术资产对大厂有吸引力", evidenceMaterialIds: ["m8", "m1"], analysisContent: "具备被并购的战略价值。" },
