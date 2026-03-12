@@ -65,12 +65,7 @@ export function Login({ onLogin }: LoginProps) {
       {/* Left: Form Panel */}
       <div className="flex w-full flex-col justify-between bg-white px-12 py-10 lg:w-[45%]">
         {/* Logo */}
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2563EB]">
-            <span className="text-sm font-bold italic text-white">A</span>
-          </div>
-          <span className="text-lg font-semibold text-[#111827] tracking-tight">AtomCAP</span>
-        </div>
+
 
         {/* Form area */}
         <div className="mx-auto w-full max-w-sm">
