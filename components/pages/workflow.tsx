@@ -73,7 +73,7 @@ export interface PendingPhase {
   reviewers: { id: string; name: string; initials: string }[]
 }
 
-type SidebarType = 
+type SidebarType =
   | "hypothesis-suggestions"
   | "term-suggestions"
   | "material-suggestions"
@@ -83,7 +83,7 @@ type SidebarType =
   | null
 
 // Full page generation view type (replaces entire workflow view)
-type FullPageView = 
+type FullPageView =
   | "hypothesis-generation"
   | null
 
@@ -440,7 +440,7 @@ export function Workflow({
 
   // Use props phases if provided, otherwise use default PHASES for existing projects
   const projectPhases = phases ?? (isNewProject ? [] : PHASES)
-  
+
   // Calculate current phase numbers from phases
   const currentSetupPhase = projectPhases.filter(p => p.groupLabel === "设立期").length
   const currentDurationPhase = projectPhases.filter(p => p.groupLabel === "存续期").length
@@ -459,14 +459,14 @@ export function Workflow({
   const [activeSidebar, setActiveSidebar] = useState<SidebarType>(null)
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatInput, setChatInput] = useState("")
-  
+
   // Full page generation view state
   const [fullPageView, setFullPageView] = useState<FullPageView>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [generationComplete, setGenerationComplete] = useState(savedGeneratedSuggestions ? savedGeneratedSuggestions.length > 0 : false)
   const [thinkingSteps, setThinkingSteps] = useState<ThinkingStep[]>([])
   const [generatedSuggestions, setGeneratedSuggestions] = useState<GeneratedSuggestion[]>(savedGeneratedSuggestions || [])
-  
+
   // Hypothesis creation dialog state
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [formData, setFormData] = useState<ProjectHypothesisFormData>({
@@ -476,7 +476,7 @@ export function Workflow({
     valuePoints: [],
     riskPoints: [],
   })
-  
+
   // Mock available project materials
   const availableMaterials: ProjectMaterialOption[] = [
     { id: "m1", name: "专利清单及技术白皮书", format: "PDF" },
@@ -630,7 +630,7 @@ export function Workflow({
       }
       return
     }
-    
+
     setActiveSidebar(type)
     if (type === "ai-chat") {
       setChatMessages([
@@ -638,7 +638,7 @@ export function Workflow({
       ])
     }
   }
-  
+
   function handleCloseFullPageView() {
     setFullPageView(null)
     setIsGenerating(false)
@@ -646,7 +646,7 @@ export function Workflow({
     setThinkingSteps([])
     setGeneratedSuggestions([])
   }
-  
+
   function handleCreateFromHypothesis(hypothesis: SuggestionHypothesis) {
     // Pre-fill form with hypothesis data including pre-selected materials
     setFormData({
@@ -664,7 +664,7 @@ export function Workflow({
     })
     setShowCreateDialog(true)
   }
-  
+
   function handleAddValuePoint() {
     setFormData((prev) => ({
       ...prev,
@@ -680,14 +680,14 @@ export function Workflow({
       ],
     }))
   }
-  
+
   function handleRemoveValuePoint(id: string) {
     setFormData((prev) => ({
       ...prev,
       valuePoints: prev.valuePoints.filter((vp) => vp.id !== id),
     }))
   }
-  
+
   function handleAddRiskPoint() {
     setFormData((prev) => ({
       ...prev,
@@ -703,14 +703,14 @@ export function Workflow({
       ],
     }))
   }
-  
+
   function handleRemoveRiskPoint(id: string) {
     setFormData((prev) => ({
       ...prev,
       riskPoints: prev.riskPoints.filter((rp) => rp.id !== id),
     }))
   }
-  
+
   function handleToggleMaterial(pointType: "value" | "risk", pointId: string, materialId: string) {
     setFormData((prev) => {
       const key = pointType === "value" ? "valuePoints" : "riskPoints"
@@ -719,17 +719,17 @@ export function Workflow({
         [key]: prev[key].map((point) =>
           point.id === pointId
             ? {
-                ...point,
-                evidenceMaterialIds: point.evidenceMaterialIds.includes(materialId)
-                  ? point.evidenceMaterialIds.filter((id) => id !== materialId)
-                  : [...point.evidenceMaterialIds, materialId],
-              }
+              ...point,
+              evidenceMaterialIds: point.evidenceMaterialIds.includes(materialId)
+                ? point.evidenceMaterialIds.filter((id) => id !== materialId)
+                : [...point.evidenceMaterialIds, materialId],
+            }
             : point
         ),
       }
     })
   }
-  
+
   function handleCloseCreateDialog() {
     setShowCreateDialog(false)
     setFormData({
@@ -740,7 +740,7 @@ export function Workflow({
       riskPoints: [],
     })
   }
-  
+
   function handleSubmitHypothesis() {
     // Create a pending hypothesis change request
     const pendingHypothesis: PendingProjectHypothesis = {
@@ -758,16 +758,16 @@ export function Workflow({
         { id: "lisi", name: "李四", initials: "李四" },
       ],
     }
-    
+
     onCreatePendingProjectHypothesis?.(pendingHypothesis)
     handleCloseCreateDialog()
     handleCloseFullPageView()
   }
-  
+
   function handleStartGeneration() {
     setIsGenerating(true)
     setGenerationComplete(false)
-    
+
     const steps: ThinkingStep[] = [
       { id: "s1", label: "读取当前阶段假设清单...", status: "waiting" },
       { id: "s2", label: "分析假设完整性与覆盖面...", status: "waiting" },
@@ -776,7 +776,7 @@ export function Workflow({
       { id: "s5", label: "生成改进建议...", status: "waiting" },
     ]
     setThinkingSteps(steps)
-    
+
     // Animate through steps
     let currentStep = 0
     const interval = setInterval(() => {
@@ -794,7 +794,7 @@ export function Workflow({
         setThinkingSteps((prev) =>
           prev.map((step) => ({ ...step, status: "completed" }))
         )
-        
+
         // Generate mock suggestions with linked items - 5 suggestions
         setTimeout(() => {
           const suggestions: GeneratedSuggestion[] = [
@@ -803,8 +803,8 @@ export function Workflow({
               title: "补充技术壁垒假设",
               content: "当前假设清单缺少对核心技术壁垒的系统性论证。建议增加关于专利布局、技术团队稳定性、技术迭代能力等方面的假设，以更全面评估投资标的的技术竞争力。",
               linkedTerms: [
-                { id: "t1", name: "知识产权归属条款" },
-                { id: "t2", name: "核心团队锁定条款" },
+                { id: "t1", name: "知识产权归属" },
+                { id: "t2", name: "核心团队锁定" },
               ],
               linkedMaterials: [
                 { id: "m1", name: "专利清单及技术白皮书" },
@@ -815,33 +815,33 @@ export function Workflow({
                   id: "sh1-1",
                   direction: "技术攻关",
                   category: "技术壁垒",
-                  name: "专利布局完善性假设",
+                  name: "专利布局完善，能够形成技术壁垒。",
                   isExisting: false,
                   valuePoints: [
-                    { id: "vp1", title: "专利布局完善", evidenceDescription: "公司在核心技术领域拥有20+项专利", evidenceMaterialIds: ["m1"], analysisContent: "专利覆盖核心算法、模型架构和数据处理流程，形成完整的技术护城河。" },
+                    { id: "vp1", title: "专利布局完善，覆盖领域广。", evidenceDescription: "公司在核心技术领域拥有20+项专利", evidenceMaterialIds: ["m1"], analysisContent: "专利覆盖核心算法、模型架构和数据处理流程，形成完整的技术护城河。" },
                   ],
                   riskPoints: [
-                    { id: "rp1", title: "专利维护成本", evidenceDescription: "专利维护需要持续投入", evidenceMaterialIds: ["m1"], analysisContent: "需评估专利维护成本对运营的影响。" },
+                    { id: "rp1", title: "专利维护成本较高。", evidenceDescription: "专利维护需要持续投入", evidenceMaterialIds: ["m1"], analysisContent: "需评估专利维护成本对运营的影响。" },
                   ],
                 },
                 {
                   id: "sh1-2",
                   direction: "技术攻关",
                   category: "团队稳定性",
-                  name: "技术团队核心成员稳定性假设",
+                  name: "技术团队核心成员稳定性，人才流失少，能够长期支撑高水平研发工作。",
                   isExisting: true,
                   valuePoints: [
-                    { id: "vp2", title: "技术团队稳定", evidenceDescription: "核心技术人员平均在职时间超过3年", evidenceMaterialIds: ["m2"], analysisContent: "团队稳定性有助于技术积累和持续创新。" },
+                    { id: "vp2", title: "技术团队存续时间长。", evidenceDescription: "核心技术人员平均在职时间超过3年。", evidenceMaterialIds: ["m2"], analysisContent: "团队稳定性有助于技术积累和持续高水平研发。" },
                   ],
                   riskPoints: [
-                    { id: "rp2", title: "人才流失风险", evidenceDescription: "AI行业人才竞争激烈", evidenceMaterialIds: ["m2"], analysisContent: "需关注核心人员激励机制和竞业限制条款。" },
+                    { id: "rp2", title: "AI行业人才竞争激烈，存在人才流失风险。", evidenceDescription: "AI行业人才竞争激烈，友商可能以各种方式挖墙脚。", evidenceMaterialIds: ["m2"], analysisContent: "需关注核心人员激励机制和竞业限制条款。" },
                   ],
                 },
                 {
                   id: "sh1-3",
                   direction: "技术攻关",
                   category: "技术迭代",
-                  name: "技术迭代能力假设",
+                  name: "技术迭代能力强，能迅速响应市场变化。",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp3", title: "迭代速度快", evidenceDescription: "产品更新周期短于行业平均", evidenceMaterialIds: ["m1", "m3"], analysisContent: "快速迭代能力体现团队执行力和技术实力。" },
@@ -868,7 +868,7 @@ export function Workflow({
                   id: "sh2-1",
                   direction: "市场判断",
                   category: "市场规模",
-                  name: "国内市场TAM假设",
+                  name: "国内市场TAM规模稳步增长，发展前景好。",
                   isExisting: false,
                   valuePoints: [
                     { id: "vp4", title: "市场增长潜力大", evidenceDescription: "AI基础设施市场年复合增长率超30%", evidenceMaterialIds: ["m3", "m4"], analysisContent: "市场处于快速增长期，先发优势明显。" },
@@ -881,7 +881,7 @@ export function Workflow({
                   id: "sh2-2",
                   direction: "市场判断",
                   category: "市场渗透",
-                  name: "多模态融合市场假设",
+                  name: "多模态大模型市场需求增长。",
                   isExisting: true,
                   valuePoints: [
                     { id: "vp5", title: "多模态需求增长", evidenceDescription: "企业对多模态AI解决方案需求上升", evidenceMaterialIds: ["m3"], analysisContent: "多模态融合是行业趋势，市场空间广阔。" },
@@ -1033,7 +1033,7 @@ export function Workflow({
     const userMsg: ChatMessage = { role: "user", content: chatInput.trim() }
     setChatMessages((prev) => [...prev, userMsg])
     setChatInput("")
-    
+
     // Simulate AI response
     setTimeout(() => {
       const aiResponse: ChatMessage = {
@@ -1073,7 +1073,7 @@ export function Workflow({
             </div>
           </div>
         </div>
-        
+
         {/* Content */}
         <div className="flex-1 overflow-auto p-8">
           <div className="mx-auto max-w-4xl">
@@ -1096,7 +1096,7 @@ export function Workflow({
                 </button>
               </div>
             )}
-            
+
             {isGenerating && (
               /* Thinking Animation */
               <div className="py-12">
@@ -1106,7 +1106,7 @@ export function Workflow({
                     AI正在深度思考...
                   </div>
                 </div>
-                
+
                 <div className="rounded-2xl border border-[#E5E7EB] bg-white p-8 shadow-sm">
                   <div className="space-y-4">
                     {thinkingSteps.map((step, idx) => (
@@ -1115,8 +1115,8 @@ export function Workflow({
                         <div className={cn(
                           "flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all duration-300",
                           step.status === "completed" ? "bg-emerald-100" :
-                          step.status === "active" ? "bg-blue-100 animate-pulse" :
-                          "bg-gray-100"
+                            step.status === "active" ? "bg-blue-100 animate-pulse" :
+                              "bg-gray-100"
                         )}>
                           {step.status === "completed" ? (
                             <Check className="h-4 w-4 text-emerald-600" />
@@ -1126,17 +1126,17 @@ export function Workflow({
                             <span className="text-xs text-gray-400">{idx + 1}</span>
                           )}
                         </div>
-                        
+
                         {/* Step label */}
                         <span className={cn(
                           "text-sm transition-colors duration-300",
                           step.status === "completed" ? "text-emerald-700 font-medium" :
-                          step.status === "active" ? "text-blue-700 font-medium" :
-                          "text-gray-400"
+                            step.status === "active" ? "text-blue-700 font-medium" :
+                              "text-gray-400"
                         )}>
                           {step.label}
                         </span>
-                        
+
                         {/* Progress indicator for active step */}
                         {step.status === "active" && (
                           <div className="flex-1">
@@ -1151,7 +1151,7 @@ export function Workflow({
                 </div>
               </div>
             )}
-            
+
             {generationComplete && (
               /* Results */
               <div className="space-y-6">
@@ -1164,11 +1164,11 @@ export function Workflow({
                     <p className="text-sm text-[#6B7280]">共生成 {generatedSuggestions.length} 条改进建议</p>
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   {generatedSuggestions.map((suggestion, idx) => (
-                    <div 
-                      key={suggestion.id} 
+                    <div
+                      key={suggestion.id}
                       className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm transition-all hover:shadow-md"
                     >
                       <div className="flex items-start gap-4 mb-4">
@@ -1180,7 +1180,7 @@ export function Workflow({
                           <p className="text-sm text-[#6B7280] leading-relaxed">{suggestion.content}</p>
                         </div>
                       </div>
-                      
+
                       {/* Linked Items */}
                       <div className="ml-12 space-y-3 pt-4 border-t border-[#F3F4F6]">
                         {/* Linked Terms */}
@@ -1199,7 +1199,7 @@ export function Workflow({
                             </div>
                           </div>
                         )}
-                        
+
                         {/* Linked Materials */}
                         {suggestion.linkedMaterials.length > 0 && (
                           <div className="flex items-start gap-2">
@@ -1216,7 +1216,7 @@ export function Workflow({
                             </div>
                           </div>
                         )}
-                        
+
                         {/* Hypotheses List */}
                         <div className="pt-3 border-t border-[#F3F4F6]">
                           <div className="flex items-center gap-2 mb-3">
@@ -1225,7 +1225,7 @@ export function Workflow({
                           </div>
                           <div className="space-y-2">
                             {suggestion.hypotheses.map((hypothesis) => (
-                              <div 
+                              <div
                                 key={hypothesis.id}
                                 className="flex items-center justify-between gap-4 rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-3"
                               >
@@ -1265,7 +1265,7 @@ export function Workflow({
                     </div>
                   ))}
                 </div>
-                
+
                 {/* Action Buttons */}
                 <div className="flex items-center justify-center gap-4 pt-6">
                   <button
@@ -1287,7 +1287,7 @@ export function Workflow({
             )}
           </div>
         </div>
-        
+
         {/* Hypothesis Creation Dialog */}
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -1304,7 +1304,7 @@ export function Workflow({
                 基于AI建议创建新的项目假设，包含价值点和风险点分析
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-6 mt-4">
               {/* Basic Info */}
               <div className="grid grid-cols-2 gap-4">
@@ -1327,7 +1327,7 @@ export function Workflow({
                   />
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-[#374151] mb-1.5">假设名称</label>
                 <Input
@@ -1337,7 +1337,7 @@ export function Workflow({
                   className="h-10"
                 />
               </div>
-              
+
               {/* Value Points */}
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -1355,7 +1355,7 @@ export function Workflow({
                     添加价值点
                   </button>
                 </div>
-                
+
                 <div className="space-y-4">
                   {formData.valuePoints.map((vp, idx) => (
                     <div key={vp.id} className="rounded-lg border border-[#E5E7EB] p-4 bg-emerald-50/30">
@@ -1368,7 +1368,7 @@ export function Workflow({
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
-                      
+
                       <div className="space-y-3">
                         <Input
                           value={vp.title}
@@ -1381,7 +1381,7 @@ export function Workflow({
                           placeholder="价值点标题"
                           className="h-9 text-sm"
                         />
-                        
+
                         {/* Evidence Support */}
                         <div>
                           <div className="flex items-center gap-2 mb-2">
@@ -1400,7 +1400,7 @@ export function Workflow({
                             rows={2}
                             className="w-full rounded-md border border-input bg-white px-3 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           />
-                          
+
                           {/* Material Selection - checkbox list */}
                           <div className="mt-2">
                             <p className="text-xs text-[#6B7280] mb-1.5">关联项目材料：</p>
@@ -1435,7 +1435,7 @@ export function Workflow({
                             </button>
                           </div>
                         </div>
-                        
+
                         {/* Analysis */}
                         <div>
                           <div className="flex items-center gap-2 mb-2">
@@ -1458,7 +1458,7 @@ export function Workflow({
                       </div>
                     </div>
                   ))}
-                  
+
                   {formData.valuePoints.length === 0 && (
                     <div className="rounded-lg border border-dashed border-[#E5E7EB] p-6 text-center">
                       <p className="text-sm text-[#6B7280]">暂无价值点，点击上方按钮添加</p>
@@ -1466,7 +1466,7 @@ export function Workflow({
                   )}
                 </div>
               </div>
-              
+
               {/* Risk Points */}
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -1484,7 +1484,7 @@ export function Workflow({
                     添加风险点
                   </button>
                 </div>
-                
+
                 <div className="space-y-4">
                   {formData.riskPoints.map((rp, idx) => (
                     <div key={rp.id} className="rounded-lg border border-[#E5E7EB] p-4 bg-red-50/30">
@@ -1497,7 +1497,7 @@ export function Workflow({
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
-                      
+
                       <div className="space-y-3">
                         <Input
                           value={rp.title}
@@ -1510,7 +1510,7 @@ export function Workflow({
                           placeholder="风险点标题"
                           className="h-9 text-sm"
                         />
-                        
+
                         {/* Evidence Support */}
                         <div>
                           <div className="flex items-center gap-2 mb-2">
@@ -1529,7 +1529,7 @@ export function Workflow({
                             rows={2}
                             className="w-full rounded-md border border-input bg-white px-3 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           />
-                          
+
                           {/* Material Selection - checkbox list */}
                           <div className="mt-2">
                             <p className="text-xs text-[#6B7280] mb-1.5">关联项目材料：</p>
@@ -1564,7 +1564,7 @@ export function Workflow({
                             </button>
                           </div>
                         </div>
-                        
+
                         {/* Analysis */}
                         <div>
                           <div className="flex items-center gap-2 mb-2">
@@ -1587,7 +1587,7 @@ export function Workflow({
                       </div>
                     </div>
                   ))}
-                  
+
                   {formData.riskPoints.length === 0 && (
                     <div className="rounded-lg border border-dashed border-[#E5E7EB] p-6 text-center">
                       <p className="text-sm text-[#6B7280]">暂无风险点，点击上方按钮添加</p>
@@ -1595,13 +1595,13 @@ export function Workflow({
                   )}
                 </div>
               </div>
-              
+
               {/* Action Buttons */}
               <div className="flex justify-end gap-3 pt-4 border-t border-[#E5E7EB]">
                 <Button variant="outline" onClick={handleCloseCreateDialog}>
                   取消
                 </Button>
-                <Button 
+                <Button
                   className="bg-[#2563EB] hover:bg-[#1D4ED8]"
                   onClick={handleSubmitHypothesis}
                   disabled={!formData.name.trim() || !formData.direction.trim()}
@@ -1628,7 +1628,7 @@ export function Workflow({
           <p className="text-sm text-[#6B7280] mb-6 leading-relaxed">
             这是一个新创建的项目，工作流尚未启动。点击下方按钮启动项目的第一个阶段。
           </p>
-          <button 
+          <button
             onClick={handleStartFirstPhase}
             className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8]"
           >
@@ -1911,7 +1911,7 @@ export function Workflow({
                   <X className="h-4 w-4" />
                 </button>
               </div>
-              
+
               {/* Chat Messages */}
               <ScrollArea className="flex-1 p-4">
                 <div className="space-y-4">
@@ -2019,7 +2019,7 @@ function ActionButton({ icon: Icon, label, onClick }: { icon: typeof Lightbulb; 
 
 function CompactPhaseCard({ phase }: { phase: Phase }) {
   const sc = statusConfig[phase.status]
-  
+
   return (
     <div className="w-[280px] rounded-xl border-2 border-[#2563EB] bg-blue-50/40 p-5 shadow-lg">
       {/* Header */}
