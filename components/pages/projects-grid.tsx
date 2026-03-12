@@ -1,7 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { FolderKanban, Search, Plus, X } from "lucide-react"
+import {
+  FolderKanban, Search, Plus, X, Upload, Folder,
+  ChevronLeft, ChevronRight, Check, Loader2, FileText,
+} from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import {
   Dialog,
@@ -15,6 +18,12 @@ import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { type Strategy } from "./strategies-grid"
+import {
+  mockLocalFolders,
+  getFormatIcon,
+  getFormatColor,
+  type MockFile,
+} from "@/components/pages/project-materials"
 
 // Available owners
 const availableOwners = [
@@ -58,6 +67,7 @@ export interface PendingProject {
   initiator: { id: string; name: string; initials: string }
   initiatedAt: string
   reviewers: { id: string; name: string; initials: string }[]
+  uploadedFiles?: MockFile[]
 }
 
 export const initialProjects: Project[] = [
@@ -195,6 +205,14 @@ export function ProjectsGrid({ projects, strategies, onProjectsChange, onSelectP
   const [selectedRound, setSelectedRound] = useState("A轮")
   const [selectedOwnerId, setSelectedOwnerId] = useState("zhangwei")
   const [selectedStrategyId, setSelectedStrategyId] = useState("")
+
+  // Upload dialog state
+  const [isUploadOpen, setIsUploadOpen] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState<MockFile[]>([])
+  const [uploadSelectedFiles, setUploadSelectedFiles] = useState<Set<string>>(new Set())
+  const [uploadCurrentFolderId, setUploadCurrentFolderId] = useState<string | null>(null)
+  const [uploadState, setUploadState] = useState<"idle" | "uploading">("idle")
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [newTags, setNewTags] = useState("")
 
   const filteredProjects = projects.filter(
@@ -235,6 +253,7 @@ export function ProjectsGrid({ projects, strategies, onProjectsChange, onSelectP
         { id: "zhangwei", name: "张伟", initials: "张伟" },
         { id: "lisi", name: "李四", initials: "李四" },
       ],
+      uploadedFiles: uploadedFiles.length > 0 ? uploadedFiles : undefined,
     }
 
     onCreatePending?.(pendingRequest)
@@ -251,6 +270,52 @@ export function ProjectsGrid({ projects, strategies, onProjectsChange, onSelectP
     setSelectedOwnerId("zhangwei")
     setSelectedStrategyId("")
     setNewTags("")
+    setUploadedFiles([])
+    setUploadSelectedFiles(new Set())
+    setUploadCurrentFolderId(null)
+    setUploadState("idle")
+    setUploadProgress(0)
+  }
+
+  function openUploadDialog() {
+    setUploadSelectedFiles(new Set())
+    setUploadCurrentFolderId(null)
+    setUploadState("idle")
+    setUploadProgress(0)
+    setIsUploadOpen(true)
+  }
+
+  function handleUploadToggleFile(fileId: string) {
+    setUploadSelectedFiles((prev) => {
+      const next = new Set(prev)
+      if (next.has(fileId)) next.delete(fileId)
+      else next.add(fileId)
+      return next
+    })
+  }
+
+  function handleUploadConfirm() {
+    if (uploadSelectedFiles.size === 0 || uploadState === "uploading") return
+    setUploadState("uploading")
+    setUploadProgress(0)
+    setTimeout(() => setUploadProgress(100), 50)
+    setTimeout(() => {
+      const allFiles = mockLocalFolders.flatMap((f) => f.files)
+      const selected = allFiles.filter((f) => uploadSelectedFiles.has(f.id))
+      setUploadedFiles((prev) => {
+        // Merge, avoid duplicates by id
+        const existingIds = new Set(prev.map((f) => f.id))
+        return [...prev, ...selected.filter((f) => !existingIds.has(f.id))]
+      })
+      setIsUploadOpen(false)
+      setUploadState("idle")
+      setUploadProgress(0)
+      setUploadSelectedFiles(new Set())
+    }, 1400)
+  }
+
+  function handleRemoveUploadedFile(fileId: string) {
+    setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId))
   }
 
   return (
@@ -503,6 +568,48 @@ export function ProjectsGrid({ projects, strategies, onProjectsChange, onSelectP
               </div>
             </div>
 
+            {/* Upload Materials Section */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium text-[#374151]">上传材料</Label>
+                <button
+                  type="button"
+                  onClick={openUploadDialog}
+                  className="flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]"
+                >
+                  <Upload className="h-3.5 w-3.5" />
+                  上传材料
+                </button>
+              </div>
+              {uploadedFiles.length > 0 ? (
+                <div className="rounded-lg border border-[#E5E7EB] divide-y divide-[#F3F4F6]">
+                  {uploadedFiles.map((file) => {
+                    const FormatIcon = getFormatIcon(file.format)
+                    return (
+                      <div key={file.id} className="flex items-center gap-3 px-3 py-2">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-[#F3F4F6]">
+                          <FormatIcon className="h-3.5 w-3.5 text-[#6B7280]" />
+                        </div>
+                        <span className="flex-1 truncate text-sm text-[#374151]">{file.name}</span>
+                        <Badge variant="outline" className={`text-[10px] shrink-0 ${getFormatColor(file.format)}`}>
+                          {file.format}
+                        </Badge>
+                        <span className="text-xs text-[#9CA3AF] shrink-0">{file.size}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveUploadedFile(file.id)}
+                          className="ml-1 rounded p-0.5 text-[#9CA3AF] hover:text-[#374151] hover:bg-[#F3F4F6] transition-colors"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <p className="text-xs text-[#9CA3AF]">暂无上传材料，点击右侧按钮上传</p>
+              )}
+            </div>
 
           </div>
 
@@ -527,6 +634,149 @@ export function ProjectsGrid({ projects, strategies, onProjectsChange, onSelectP
               创建
             </button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Upload Materials Sub-dialog */}
+      <Dialog open={isUploadOpen} onOpenChange={(open) => { if (!open && uploadState !== "uploading") setIsUploadOpen(false) }}>
+        <DialogContent className="sm:max-w-[520px]">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold text-[#111827]">上传项目材料</DialogTitle>
+            <DialogDescription className="text-sm text-[#6B7280]">
+              从本机文件夹中选择并上传材料文件
+            </DialogDescription>
+          </DialogHeader>
+
+          {uploadState === "uploading" ? (
+            <div className="flex flex-col items-center justify-center py-10 gap-5">
+              <Loader2 className="h-10 w-10 animate-spin text-[#2563EB]" />
+              <p className="text-sm font-medium text-[#374151]">
+                正在上传 {uploadSelectedFiles.size} 个文件...
+              </p>
+              <div className="w-full px-2">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E7EB]">
+                  <div
+                    className="h-full bg-[#2563EB] transition-all duration-[1200ms] ease-in-out"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4 py-2">
+              {/* File browser */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-[#374151]">选择文件</Label>
+
+                {/* Breadcrumb */}
+                <div className="flex items-center gap-1.5 rounded-md bg-[#F9FAFB] border border-[#E5E7EB] px-3 py-2 text-xs text-[#6B7280]">
+                  <Folder className="h-3.5 w-3.5 text-[#9CA3AF] shrink-0" />
+                  <span>本机文档</span>
+                  {uploadCurrentFolderId && (
+                    <>
+                      <ChevronRight className="h-3 w-3 shrink-0" />
+                      <span className="text-[#374151] font-medium">
+                        {mockLocalFolders.find(f => f.id === uploadCurrentFolderId)?.name}
+                      </span>
+                    </>
+                  )}
+                </div>
+
+                {/* Browser pane */}
+                <div className="rounded-lg border border-[#E5E7EB] bg-white overflow-hidden">
+                  {uploadCurrentFolderId && (
+                    <button
+                      onClick={() => setUploadCurrentFolderId(null)}
+                      className="flex items-center gap-2 w-full px-3 py-2.5 text-xs font-medium text-[#6B7280] border-b border-[#E5E7EB] hover:bg-[#F9FAFB] transition-colors"
+                    >
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                      返回上一层
+                    </button>
+                  )}
+                  <div className="max-h-[240px] overflow-y-auto divide-y divide-[#F3F4F6]">
+                    {uploadCurrentFolderId ? (
+                      (mockLocalFolders.find(f => f.id === uploadCurrentFolderId)?.files || []).map((file) => {
+                        const isSelected = uploadSelectedFiles.has(file.id)
+                        const FormatIcon = getFormatIcon(file.format)
+                        return (
+                          <button
+                            key={file.id}
+                            onClick={() => handleUploadToggleFile(file.id)}
+                            className={cn(
+                              "flex items-center gap-3 w-full px-3 py-2.5 text-left transition-colors",
+                              isSelected ? "bg-blue-50" : "hover:bg-[#F9FAFB]"
+                            )}
+                          >
+                            <div className={cn(
+                              "flex h-4 w-4 items-center justify-center rounded border shrink-0 transition-colors",
+                              isSelected ? "bg-[#2563EB] border-[#2563EB]" : "border-[#D1D5DB]"
+                            )}>
+                              {isSelected && <Check className="h-3 w-3 text-white" />}
+                            </div>
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-[#F3F4F6]">
+                              <FormatIcon className="h-3.5 w-3.5 text-[#6B7280]" />
+                            </div>
+                            <span className="flex-1 truncate text-sm text-[#374151]">{file.name}</span>
+                            <Badge variant="outline" className={`text-[10px] shrink-0 ${getFormatColor(file.format)}`}>
+                              {file.format}
+                            </Badge>
+                            <span className="text-xs text-[#9CA3AF] shrink-0 w-14 text-right">{file.size}</span>
+                          </button>
+                        )
+                      })
+                    ) : (
+                      mockLocalFolders.map((folder) => {
+                        const selectedInFolder = folder.files.filter((f) => uploadSelectedFiles.has(f.id)).length
+                        return (
+                          <button
+                            key={folder.id}
+                            onClick={() => setUploadCurrentFolderId(folder.id)}
+                            className="flex items-center gap-3 w-full px-3 py-2.5 text-left hover:bg-[#F9FAFB] transition-colors"
+                          >
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-amber-50">
+                              <Folder className="h-3.5 w-3.5 text-amber-600" />
+                            </div>
+                            <span className="flex-1 text-sm text-[#374151]">{folder.name}</span>
+                            {selectedInFolder > 0 && (
+                              <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] shrink-0">
+                                已选 {selectedInFolder}
+                              </Badge>
+                            )}
+                            <ChevronRight className="h-4 w-4 text-[#9CA3AF]" />
+                          </button>
+                        )
+                      })
+                    )}
+                  </div>
+                </div>
+
+                {uploadSelectedFiles.size > 0 && (
+                  <p className="text-xs text-[#2563EB]">已选择 {uploadSelectedFiles.size} 个文件</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {uploadState === "idle" && (
+            <div className="flex justify-end gap-3 pt-2 border-t border-[#E5E7EB] mt-2">
+              <button
+                type="button"
+                onClick={() => setIsUploadOpen(false)}
+                className="rounded-lg border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]"
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                onClick={handleUploadConfirm}
+                disabled={uploadSelectedFiles.size === 0}
+                className="flex items-center gap-2 rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Upload className="h-4 w-4" />
+                上传 {uploadSelectedFiles.size > 0 ? `${uploadSelectedFiles.size} 个` : ""}文件
+              </button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

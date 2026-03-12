@@ -164,7 +164,7 @@ export default function Page() {
         [newProjectId]: [...templateTerms, ...userTerms],
       }))
 
-      // Inherit materials: template mock materials + user-approved strategy materials
+      // Inherit materials: template mock materials + user-approved strategy materials + files uploaded during project creation
       const templateMaterials: StrategyMaterial[] = getTemplateMaterialsForStrategy(sid).map((m) => ({
         ...m,
         strategyId: sid,
@@ -172,7 +172,19 @@ export default function Page() {
         owner: "张伟",
         createdAt: today,
       }))
+      const uploadedAtCreation: StrategyMaterial[] = (pending.uploadedFiles || []).map((f) => ({
+        id: `uploaded-${f.id}-${Date.now()}`,
+        strategyId: sid,
+        name: f.name,
+        format: f.format,
+        size: f.size,
+        category: "",
+        description: "",
+        owner: "张伟",
+        createdAt: today,
+      }))
       const inheritedMaterials: StrategyMaterial[] = [
+        ...uploadedAtCreation,
         ...(strategyMaterials[sid] || []),
         ...templateMaterials,
       ]
