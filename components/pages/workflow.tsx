@@ -161,6 +161,7 @@ export interface PendingProjectHypothesis {
   projectId: string
   projectName: string
   hypothesis: ProjectHypothesisFormData
+  materialOptions: { id: string; name: string; format: string; size?: string }[]
   changeId: string
   changeName: string
   changeType: "create"
@@ -748,6 +749,7 @@ export function Workflow({
       projectId,
       projectName,
       hypothesis: formData,
+      materialOptions: availableMaterials,
       changeId: `CR-PH-${Date.now().toString().slice(-6)}`,
       changeName: `创建项目假设: ${formData.name}`,
       changeType: "create",

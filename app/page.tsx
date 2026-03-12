@@ -289,6 +289,14 @@ export default function Page() {
         updatedAt: today,
         status: "pending" as const,
       }
+      // Build a lookup map from materialId -> material info
+      const matMap = new Map((pending.materialOptions || []).map((m) => [m.id, m]))
+      const resolveMaterials = (ids: string[]) =>
+        ids
+          .map((id) => matMap.get(id))
+          .filter(Boolean)
+          .map((m) => ({ name: `${m!.name}.${m!.format.toLowerCase()}`, size: m!.size || "—", date: today }))
+
       // Build HypothesisDetail from form data, with empty committee/verification/terms
       const newDetail: HypothesisDetail = {
         id: newId,
@@ -301,7 +309,7 @@ export default function Page() {
         valuePoints: hypothesis.valuePoints.map((vp) => ({
           id: vp.id,
           title: vp.title,
-          evidence: { description: vp.evidenceDescription, files: [] },
+          evidence: { description: vp.evidenceDescription, files: resolveMaterials(vp.evidenceMaterialIds) },
           analysis: {
             content: vp.analysisContent,
             creator: { name: "张伟", role: "投资经理" },
@@ -313,7 +321,7 @@ export default function Page() {
         riskPoints: hypothesis.riskPoints.map((rp) => ({
           id: rp.id,
           title: rp.title,
-          evidence: { description: rp.evidenceDescription, files: [] },
+          evidence: { description: rp.evidenceDescription, files: resolveMaterials(rp.evidenceMaterialIds) },
           analysis: {
             content: rp.analysisContent,
             creator: { name: "张伟", role: "投资经理" },
