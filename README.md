@@ -665,9 +665,9 @@ interface LinkedHypothesis {
 
 ---
 
-## 后端开发建议
+## 后端开发指南
 
-### API设计
+### Swagger
 
 1. **认证**
    - `POST /api/auth/login` - 用户登录
@@ -706,7 +706,7 @@ interface LinkedHypothesis {
 
 ### 数据库设计
 
-- PostgreSQL、MySQL都行，看你们比较熟悉什么数据库中间件
+- MySQL
 - 主要表：users, strategies, projects, phases, hypotheses, terms, materials, change_requests
 - 评论使用单独表或JSONB字段
 
@@ -714,26 +714,7 @@ interface LinkedHypothesis {
 
 ## 技术栈
 
-- **前端框架**: React + shadcn/ui + Tailwind CSS + 
-- **UI库**: shadcn/ui + Tailwind CSS
-- **图标**: Lucide React
-- **图表**: Recharts
-- **文档生成**: docx (服务端)
+- **前端框架**: React + TypeScript + Tailwind CSS
+- **后端框架**: SpringBoot + Java + Mybatis/Spring Data JDBC
+- multirepo架构，前后端分离开发，两个仓库
 
----
-
-## 开发命令
-
-```bash
-# 安装依赖
-pnpm install
-
-# 开发模式
-pnpm dev
-
-# 构建
-pnpm build
-
-# 启动生产环境
-pnpm start
-```
