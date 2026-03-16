@@ -716,5 +716,5 @@ interface LinkedHypothesis {
 
 - **前端框架**: React + TypeScript + Tailwind CSS
 - **后端框架**: SpringBoot + Java + Mybatis/Spring Data JDBC
-- multirepo架构，前后端分离开发，两个仓库
+- multirepo架构，前后端分离开发，两个仓库，前端项目名：**AtomCAP**，后端项目名**AtomCAP-server**
 
