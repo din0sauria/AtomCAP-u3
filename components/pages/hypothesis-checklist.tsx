@@ -844,7 +844,7 @@ export function HypothesisChecklist({ isNewProject = false, project, inheritedHy
   if (showDetail && selectedDetail) {
     return (
       <div className="h-full overflow-auto bg-[#F9FAFB]">
-        <div className="mx-auto max-w-5xl px-6 py-6">
+        <div className="px-6 py-6">
           {/* Breadcrumb */}
           <div className="mb-4 flex items-center gap-2 text-sm text-[#6B7280]">
             <button onClick={handleBackToList} className="hover:text-[#2563EB] transition-colors">
@@ -1519,7 +1519,7 @@ export function HypothesisChecklist({ isNewProject = false, project, inheritedHy
   // Table view
   return (
     <div className="h-full overflow-auto bg-[#F9FAFB]">
-      <div className="mx-auto max-w-7xl px-6 py-6">
+      <div className="px-6 py-6">
         {/* Strategy template banner for new projects */}
         {isNewProject && project?.strategyName && showTemplateBanner && (
           <div className="mb-4 rounded-lg bg-[#EFF6FF] border border-[#BFDBFE] p-4 relative">
