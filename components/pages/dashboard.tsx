@@ -419,7 +419,7 @@ export function Dashboard() {
                   投决: { label: "投决", color: "#7C3AED" },
                   退出: { label: "退出", color: "#059669" },
                 }}
-                className="h-[240px]"
+                className="h-[240px] w-full"
               >
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={projectTrend} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
