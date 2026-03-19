@@ -304,6 +304,7 @@ interface ProjectMaterialsProps {
   projectHypotheses?: HypothesisTableItem[]
   projectTerms?: TermTableItem[]
   onCreatePendingProjectMaterial?: (pending: PendingProjectMaterial) => void
+  isExited?: boolean
 }
 
 export function ProjectMaterials({
@@ -320,6 +321,7 @@ export function ProjectMaterials({
   projectHypotheses,
   projectTerms,
   onCreatePendingProjectMaterial,
+  isExited = false,
 }: ProjectMaterialsProps) {
   const isTrackStrategy = strategyType === "赛道策略"
   const inheritedFromParent = isTrackStrategy && isNewProject && parentStrategyName
@@ -599,24 +601,26 @@ export function ProjectMaterials({
             <p className="text-sm text-[#6B7280] mb-6 leading-relaxed">
               {project?.name ? `「${project.name}」` : "该策略"}还没有上传任何材料。点击下方按钮开始上传或生成您的第一份材料。
             </p>
-            <div className="flex items-center justify-center gap-3">
-              <button
-                onClick={openEmptyDialog}
-                className="inline-flex items-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]"
-              >
-                <Upload className="h-4 w-4" />
-                上传材料
-              </button>
-              {onCreatePendingProjectMaterial && (
+            {!isExited && (
+              <div className="flex items-center justify-center gap-3">
                 <button
-                  onClick={openGenerateDialog}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8]"
+                  onClick={openEmptyDialog}
+                  className="inline-flex items-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]"
                 >
-                  <Sparkles className="h-4 w-4" />
-                  生成材料
+                  <Upload className="h-4 w-4" />
+                  上传材料
                 </button>
-              )}
-            </div>
+                {onCreatePendingProjectMaterial && (
+                  <button
+                    onClick={openGenerateDialog}
+                    className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8]"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    生成材料
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -669,28 +673,34 @@ export function ProjectMaterials({
             {/* Header */}
             <div className="flex items-center justify-between mb-1">
               <h1 className="text-2xl font-bold text-[#111827]">通用材料</h1>
-              <div className="flex items-center gap-2">
-                {onCreatePendingProjectMaterial && (
+              {!isExited && (
+                <div className="flex items-center gap-2">
+                  {onCreatePendingProjectMaterial && (
+                    <button
+                      onClick={openGenerateDialog}
+                      className="flex items-center gap-1.5 rounded-lg bg-violet-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-700"
+                    >
+                      <Sparkles className="h-3.5 w-3.5" />
+                      生成材料
+                    </button>
+                  )}
                   <button
-                    onClick={openGenerateDialog}
-                    className="flex items-center gap-1.5 rounded-lg bg-violet-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-700"
+                    onClick={openEmptyDialog}
+                    className="flex items-center gap-1.5 rounded-lg bg-[#2563EB] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8]"
                   >
-                    <Sparkles className="h-3.5 w-3.5" />
-                    生成材料
+                    <Upload className="h-3.5 w-3.5" />
+                    上传材料
                   </button>
-                )}
-                <button
-                  onClick={openEmptyDialog}
-                  className="flex items-center gap-1.5 rounded-lg bg-[#2563EB] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8]"
-                >
-                  <Upload className="h-3.5 w-3.5" />
-                  上传材料
-                </button>
-              </div>
+                </div>
+              )}
             </div>
-            <p className="mt-1 text-sm text-[#6B7280] mb-6">
-              {project?.name ? `${project.name} - ` : ""}行业通用材料与文件管理
-            </p>
+            {isExited ? (
+              <p className="mt-1 text-sm text-[#EF4444] font-medium mb-6">项目已退出，所有信息不可更改。</p>
+            ) : (
+              <p className="mt-1 text-sm text-[#6B7280] mb-6">
+                {project?.name ? `${project.name} - ` : ""}行业通用材料与文件管理
+              </p>
+            )}
 
             {/* Table */}
             <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white">

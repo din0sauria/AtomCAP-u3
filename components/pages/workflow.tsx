@@ -22,6 +22,7 @@ import {
   ClipboardList,
   GitBranch,
   CreditCard,
+  LogOut,
 } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -70,6 +71,7 @@ export interface PendingPhase {
   changeName: string
   changeType: "next-setup" | "next-duration" | "enter-duration" | "first-setup"
     | "立项" | "next-pre-investment" | "投决" | "next-mid-investment" | "next-post-investment"
+    | "划款" | "退出"
   initiator: { id: string; name: string; initials: string }
   initiatedAt: string
   reviewers: { id: string; name: string; initials: string }[]
@@ -638,7 +640,7 @@ interface WorkflowProps {
   // Persisted AI research generation state
   savedGeneratedAiResearchGroups?: GeneratedAiResearchGroup[]
   onSaveAiResearchGroups?: (groups: GeneratedAiResearchGroup[]) => void
-  onDiKuan?: () => void
+  isExited?: boolean
 }
 
 /* ─── New Project Phase Template ─────────────── */
@@ -702,7 +704,7 @@ export function Workflow({
   onCreatePendingProjectMaterial,
   savedGeneratedAiResearchGroups,
   onSaveAiResearchGroups,
-  onDiKuan,
+  isExited = false,
 }: WorkflowProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
@@ -1002,7 +1004,39 @@ export function Workflow({
   }
 
   function handleDiKuan() {
-    onDiKuan?.()
+    const newPhase = createPhase(1, "投后期")
+    onCreatePendingPhase?.({
+      id: `pending-phase-${Date.now()}`,
+      projectId, projectName,
+      phase: newPhase,
+      changeId: `CR-P-${Date.now().toString().slice(-6)}`,
+      changeName: `划款 - 进入${newPhase.fullLabel}`,
+      changeType: "划款",
+      initiator: { id: "zhangwei", name: "张伟", initials: "张伟" },
+      initiatedAt: new Date().toISOString().split("T")[0],
+      reviewers: [
+        { id: "zhangwei", name: "张伟", initials: "张伟" },
+        { id: "lisi", name: "李四", initials: "李四" },
+      ],
+    })
+  }
+
+  function handleTuiChu() {
+    const newPhase = createPhase(1, "退出")
+    onCreatePendingPhase?.({
+      id: `pending-phase-${Date.now()}`,
+      projectId, projectName,
+      phase: newPhase,
+      changeId: `CR-P-${Date.now().toString().slice(-6)}`,
+      changeName: "退出 - 项目退出申请",
+      changeType: "退出",
+      initiator: { id: "zhangwei", name: "张伟", initials: "张伟" },
+      initiatedAt: new Date().toISOString().split("T")[0],
+      reviewers: [
+        { id: "zhangwei", name: "张伟", initials: "张伟" },
+        { id: "lisi", name: "李四", initials: "李四" },
+      ],
+    })
   }
 
   // Notify parent of initial phase on mount
@@ -4387,14 +4421,23 @@ ${logs}
                   </button>
                 </>
               )}
-              {isNewProject && isInPostInvestment && (
-                <button
-                  onClick={handleStartNextPostInvestmentPhase}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8]"
-                >
-                  <Plus className="h-4 w-4" />
-                  启动下一阶段
-                </button>
+              {isNewProject && isInPostInvestment && !isExited && (
+                <>
+                  <button
+                    onClick={handleStartNextPostInvestmentPhase}
+                    className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8]"
+                  >
+                    <Plus className="h-4 w-4" />
+                    启动下一阶段
+                  </button>
+                  <button
+                    onClick={handleTuiChu}
+                    className="inline-flex items-center gap-2 rounded-lg border-2 border-[#EF4444] bg-white px-4 py-2.5 text-sm font-medium text-[#EF4444] transition-colors hover:bg-[#FEF2F2]"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    退出
+                  </button>
+                </>
               )}
               {/* ── Legacy 设立期/存续期 buttons (existing new-project system) ── */}
               {isNewProject && !isInDuration && currentSetupPhase > 0 && (

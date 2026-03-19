@@ -1029,6 +1029,7 @@ export function getTemplateHypothesesForStrategy(strategyId: string): Hypothesis
 interface HypothesisChecklistProps {
   isNewProject?: boolean
   isInDuration?: boolean
+  isExited?: boolean
   project?: { strategyId?: string; strategyName?: string; id?: string; name?: string }
   projectMaterials?: StrategyMaterial[]
   inheritedHypotheses?: HypothesisTableItem[]
@@ -1039,7 +1040,7 @@ interface HypothesisChecklistProps {
   onCreateVerification?: (hypothesisId: string, hypothesisName: string, data: VerificationFormData) => void
 }
 
-export function HypothesisChecklist({ isNewProject = false, isInDuration = false, project, projectMaterials, inheritedHypotheses, extraDetails, onAddValuePoint, onAddRiskPoint, onCreateCommitteeDecision, onCreateVerification }: HypothesisChecklistProps) {
+export function HypothesisChecklist({ isNewProject = false, isInDuration = false, isExited = false, project, projectMaterials, inheritedHypotheses, extraDetails, onAddValuePoint, onAddRiskPoint, onCreateCommitteeDecision, onCreateVerification }: HypothesisChecklistProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [showDetail, setShowDetail] = useState(false)
@@ -2214,7 +2215,11 @@ export function HypothesisChecklist({ isNewProject = false, isInDuration = false
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-[#111827]">假设清单</h1>
-            <p className="mt-1 text-sm text-[#6B7280]">管理和跟踪项目投资假设</p>
+            {isExited ? (
+              <p className="mt-1 text-sm text-[#EF4444] font-medium">项目已退出，所有信息不可更改。</p>
+            ) : (
+              <p className="mt-1 text-sm text-[#6B7280]">管理和跟踪项目投资假设</p>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <div className="relative">
