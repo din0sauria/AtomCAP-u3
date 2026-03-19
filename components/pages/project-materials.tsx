@@ -345,6 +345,7 @@ export function ProjectMaterials({
   const [genTemplate, setGenTemplate] = useState("尽职调查报告")
   const [genGuide, setGenGuide] = useState("")
   const [genSelectedMaterials, setGenSelectedMaterials] = useState<Set<string>>(new Set())
+  const [genDescription, setGenDescription] = useState("")
   const [genThinkingStep, setGenThinkingStep] = useState(0)
   const [genProgress, setGenProgress] = useState(0)
 
@@ -472,6 +473,7 @@ export function ProjectMaterials({
     setGenSelectedHypotheses(new Set())
     setGenSelectedTerms(new Set())
     setGenSelectedMaterials(new Set())
+    setGenDescription("")
     setGenTemplate("尽职调查报告")
     setGenGuide("")
     setGenThinkingStep(0)
@@ -480,14 +482,33 @@ export function ProjectMaterials({
   }
 
   function handleStartGenerate() {
+    // Pre-fill description based on selections; user can edit it in the result step
+    const parts: string[] = []
+    if (genSelectedHypotheses.size > 0) parts.push(`${genSelectedHypotheses.size} 个假设`)
+    if (genSelectedTerms.size > 0) parts.push(`${genSelectedTerms.size} 个条款`)
+    if (genSelectedMaterials.size > 0) parts.push(`${genSelectedMaterials.size} 个参考材料`)
+    const basis = parts.length > 0 ? `基于${parts.join("、")}，` : ""
+    setGenDescription(
+      genGuide ||
+      `${basis}由AI深度分析生成的${genTemplate}。涵盖项目技术壁垒、市场空间、竞争格局及财务预测等核心维度，供投委会决策参考。`
+    )
     setGenStep("generating")
     setGenThinkingStep(0)
     setGenProgress(0)
   }
 
+  const GEN_SIZES: Record<string, string> = {
+    "尽职调查报告": "3.2 MB",
+    "商业计划书":   "2.8 MB",
+    "投资合同":     "1.5 MB",
+    "风险评估报告": "2.4 MB",
+    "投资备忘录":   "1.8 MB",
+  }
+
   function handleGenerateUpload() {
     if (!onCreatePendingProjectMaterial) return
     const fileName = `${genTemplate}.docx`
+    const fileSize = GEN_SIZES[genTemplate] || "2.0 MB"
     const pending: PendingProjectMaterial = {
       id: `pending-mat-gen-${Date.now()}`,
       projectId: projectId || "",
@@ -495,8 +516,9 @@ export function ProjectMaterials({
       material: {
         name: fileName,
         format: "DOCX",
+        size: fileSize,
         category: "AI生成材料",
-        description: genGuide || `基于AI深度分析生成的${genTemplate}`,
+        description: genDescription || `基于AI深度分析生成的${genTemplate}`,
         collectReason: `选取 ${genSelectedHypotheses.size} 个假设、${genSelectedTerms.size} 个条款、${genSelectedMaterials.size} 个参考材料，通过AI生成${genTemplate}`,
       },
       changeId: `CR-${Date.now().toString().slice(-6)}`,
@@ -1099,16 +1121,24 @@ export function ProjectMaterials({
                   {/* File info */}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-[#111827] truncate">{genTemplate}.docx</p>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-2 mt-1.5">
                       <Badge variant="outline" className="text-[10px] bg-blue-50 text-blue-700 border-blue-200">DOCX</Badge>
-                      <span className="text-xs text-[#6B7280]">预估 3.2 MB</span>
-                      <span className="text-xs text-[#6B7280]">·</span>
+                      <span className="text-xs text-[#6B7280]">{GEN_SIZES[genTemplate] || "2.0 MB"}</span>
+                      <span className="text-xs text-[#9CA3AF]">·</span>
                       <span className="text-xs text-emerald-600 font-medium">AI 生成</span>
                     </div>
-                    <p className="text-xs text-[#6B7280] mt-1.5 line-clamp-2">
-                      {genGuide || `基于 ${genSelectedHypotheses.size} 个假设、${genSelectedTerms.size} 个条款、${genSelectedMaterials.size} 个参考材料生成的${genTemplate}`}
-                    </p>
                   </div>
+                </div>
+
+                {/* Editable description */}
+                <div className="mt-4 space-y-1.5">
+                  <label className="text-xs font-medium text-[#374151]">材料简介</label>
+                  <textarea
+                    value={genDescription}
+                    onChange={(e) => setGenDescription(e.target.value)}
+                    rows={3}
+                    className="w-full rounded-md border border-input bg-[#F9FAFB] px-3 py-2 text-xs text-[#374151] ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
+                  />
                 </div>
 
                 {/* Action buttons */}

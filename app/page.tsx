@@ -950,7 +950,7 @@ export default function Page() {
         strategyId: "",
         name: material.name,
         format: material.format,
-        size: "—",
+        size: material.size || "—",
         description: material.description,
         category: material.category,
         owner: "张伟",

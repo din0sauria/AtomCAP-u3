@@ -357,6 +357,7 @@ export interface GeneratedMaterialSuggestion {
 export interface ProjectMaterialFormData {
   name: string
   format: string
+  size: string
   category: string
   description: string
   collectReason: string
