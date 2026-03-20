@@ -236,7 +236,7 @@ export default function Page() {
       const uploadedAtCreation: StrategyMaterial[] = (pending.uploadedFiles || []).map((f) => ({
         id: `uploaded-${f.id}-${Date.now()}`,
         strategyId: sid,
-        name: f.name,
+        name: f.name.replace(/\.[^.]+$/, ""), // strip file extension (e.g. "闫俊杰_CV.pdf" → "闫俊杰_CV")
         format: f.format,
         size: f.size,
         category: "",

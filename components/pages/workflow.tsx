@@ -1515,12 +1515,16 @@ export function Workflow({
   }
 
   function handleSubmitCoreTeamMaterial() {
+    // Derive material name from selected file: strip extension (e.g. "团队成员资料合集.pdf" → "团队成员资料合集")
+    const materialName = coreTeamPickerSelected
+      ? coreTeamPickerSelected.replace(/\.[^.]+$/, "")
+      : "团队成员资料合集"
     const pendingMaterial: PendingProjectMaterial = {
       id: `pending-project-material-${Date.now()}`,
       projectId,
       projectName,
       material: {
-        name: "核心团队履历",
+        name: materialName,
         format: "PDF",
         size: coreTeamFileSize,
         category: "人员简历",
@@ -1528,7 +1532,7 @@ export function Workflow({
         collectReason: "当前阶段假设清单中包含多项团队能力相关假设，核心团队履历可直接用于验证上述假设，并为董事会席位条款谈判提供人才质量的客观依据。",
       },
       changeId: `CR-PM-${Date.now().toString().slice(-6)}`,
-      changeName: `上传项目材料: 核心团队履历`,
+      changeName: `上传项目材料: ${materialName}`,
       changeType: "collect",
       initiator: { id: "zhangwei", name: "张伟", initials: "张伟" },
       initiatedAt: new Date().toISOString().split("T")[0],
