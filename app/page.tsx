@@ -365,6 +365,7 @@ export default function Page() {
         }))
       }
       // When a 投决 phase is approved, store the 投决 record for display in the workflow
+      // and add mid-investment hypotheses with statuses (first 18 verified, rest risky)
       if (changeType === "投决") {
         setTouJueRecords((prev) => ({
           ...prev,
@@ -374,6 +375,18 @@ export default function Page() {
             time: new Date().toISOString().split("T")[0],
           },
         }))
+        // Add the new mid-investment hypotheses (ai-h8 to ai-h21) from template
+        // and set statuses: first 18 hypotheses → verified (成立), rest → risky (不成立)
+        const allTemplateHypotheses = getTemplateHypothesesForStrategy("1")
+        const currentHypotheses = projectHypotheses[projectId] || []
+        const existingIds = new Set(currentHypotheses.map((h) => h.id))
+        const newHypotheses = allTemplateHypotheses.filter((h) => !existingIds.has(h.id))
+        const combined = [...currentHypotheses, ...newHypotheses]
+        const withStatuses = combined.map((h, idx) => ({
+          ...h,
+          status: (idx < 18 ? "verified" : "risky") as "verified" | "pending" | "risky",
+        }))
+        setProjectHypotheses((prev) => ({ ...prev, [projectId]: withStatuses }))
       }
       // When a 划款 phase is approved, store the 划款 record for display in the workflow
       if (changeType === "划款") {

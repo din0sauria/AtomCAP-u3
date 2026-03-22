@@ -202,6 +202,7 @@ export function ProjectDetail({ projectId, project, phases, onPhasesChange, onCr
             isNewProject={isNewProject}
             isInDuration={isHypothesisLocked || !!isExited}
             isExited={isExited}
+            isMidInvestment={isMidInvestment}
             project={project}
             projectMaterials={projectMaterials}
             inheritedHypotheses={projectHypotheses}

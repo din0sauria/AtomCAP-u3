@@ -996,18 +996,152 @@ const aiInfrastructureHypotheses: HypothesisTableItem[] = [
   },
   {
     id: "ai-h7",
-
-
-
-
-
-
     direction: "团队能力",
     category: "创始人",
-    name: "创始人具备丰富的AI产品商业化经验。",
+    name: "创始人具备丰富的AI产品商业化经验",
     owner: "王五",
     createdAt: "2026-01-22",
     updatedAt: "2026-02-28",
+    status: "pending",
+  },
+  {
+    id: "ai-h8",
+    direction: "团队能力",
+    category: "创始人",
+    name: "创始人具有扎实的人工智能学术背景",
+    owner: "张伟",
+    createdAt: "2026-02-01",
+    updatedAt: "2026-03-05",
+    status: "pending",
+  },
+  {
+    id: "ai-h9",
+    direction: "团队能力",
+    category: "创始人",
+    name: "创始人具有扎实的人工智能学术背景",
+    owner: "李四",
+    createdAt: "2026-02-01",
+    updatedAt: "2026-03-05",
+    status: "pending",
+  },
+  {
+    id: "ai-h10",
+    direction: "团队能力",
+    category: "核心团队",
+    name: "研发团队规模雄厚，人才配置全面，技术栈完善",
+    owner: "王五",
+    createdAt: "2026-02-02",
+    updatedAt: "2026-03-06",
+    status: "pending",
+  },
+  {
+    id: "ai-h11",
+    direction: "团队能力",
+    category: "核心团队",
+    name: "商业化团队经验丰富，有较强产品商业化能力",
+    owner: "张伟",
+    createdAt: "2026-02-02",
+    updatedAt: "2026-03-06",
+    status: "pending",
+  },
+  {
+    id: "ai-h12",
+    direction: "团队能力",
+    category: "组织效率",
+    name: "团队组织架构精简，变动调整灵活",
+    owner: "李四",
+    createdAt: "2026-02-03",
+    updatedAt: "2026-03-07",
+    status: "pending",
+  },
+  {
+    id: "ai-h13",
+    direction: "团队能力",
+    category: "组织效率",
+    name: "团队管理效率高，管理成本可控",
+    owner: "王五",
+    createdAt: "2026-02-03",
+    updatedAt: "2026-03-07",
+    status: "pending",
+  },
+  {
+    id: "ai-h14",
+    direction: "团队能力",
+    category: "人才吸引力",
+    name: "薪酬福利好，奖励体系完善，绑定员工发展与企业发展",
+    owner: "张伟",
+    createdAt: "2026-02-04",
+    updatedAt: "2026-03-08",
+    status: "pending",
+  },
+  {
+    id: "ai-h15",
+    direction: "团队能力",
+    category: "人才吸引力",
+    name: "团队提供广阔发展平台与协作、包容的组织文化，为员工发展提供上升空间",
+    owner: "李四",
+    createdAt: "2026-02-04",
+    updatedAt: "2026-03-08",
+    status: "pending",
+  },
+  {
+    id: "ai-h16",
+    direction: "财务",
+    category: "资金使用效率",
+    name: "营运能力强，固定资产周转率强",
+    owner: "王五",
+    createdAt: "2026-02-05",
+    updatedAt: "2026-03-09",
+    status: "pending",
+  },
+  {
+    id: "ai-h17",
+    direction: "财务",
+    category: "资金使用效率",
+    name: "盈利质量好，亏损幅度逐步收窄",
+    owner: "张伟",
+    createdAt: "2026-02-05",
+    updatedAt: "2026-03-09",
+    status: "pending",
+  },
+  {
+    id: "ai-h18",
+    direction: "财务",
+    category: "资金使用效率",
+    name: "投资效率高，兼具稳定性与收益性",
+    owner: "李四",
+    createdAt: "2026-02-06",
+    updatedAt: "2026-03-10",
+    status: "pending",
+  },
+  {
+    id: "ai-h19",
+    direction: "财务",
+    category: "资产结构",
+    name: "资产质量良好，受限资金主要以现金形式存在，规模可控",
+    owner: "王五",
+    createdAt: "2026-02-06",
+    updatedAt: "2026-03-10",
+    status: "pending",
+  },
+  {
+    id: "ai-h20",
+    direction: "财务",
+    category: "资产结构",
+    name: "资产流动性强，大部分资产可快速变现",
+    owner: "张伟",
+    createdAt: "2026-02-07",
+    updatedAt: "2026-03-11",
+    status: "pending",
+  },
+  {
+    id: "ai-h21",
+    direction: "财务",
+    category: "资产结构",
+    name: "债务规模可控，资金流稳定",
+    owner: "李四",
+    createdAt: "2026-02-07",
+    updatedAt: "2026-03-11",
     status: "pending",
   },
 ]
@@ -1030,6 +1164,7 @@ interface HypothesisChecklistProps {
   isNewProject?: boolean
   isInDuration?: boolean
   isExited?: boolean
+  isMidInvestment?: boolean
   project?: { strategyId?: string; strategyName?: string; id?: string; name?: string }
   projectMaterials?: StrategyMaterial[]
   inheritedHypotheses?: HypothesisTableItem[]
@@ -1040,7 +1175,7 @@ interface HypothesisChecklistProps {
   onCreateVerification?: (hypothesisId: string, hypothesisName: string, data: VerificationFormData) => void
 }
 
-export function HypothesisChecklist({ isNewProject = false, isInDuration = false, isExited = false, project, projectMaterials, inheritedHypotheses, extraDetails, onAddValuePoint, onAddRiskPoint, onCreateCommitteeDecision, onCreateVerification }: HypothesisChecklistProps) {
+export function HypothesisChecklist({ isNewProject = false, isInDuration = false, isExited = false, isMidInvestment = false, project, projectMaterials, inheritedHypotheses, extraDetails, onAddValuePoint, onAddRiskPoint, onCreateCommitteeDecision, onCreateVerification }: HypothesisChecklistProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [showDetail, setShowDetail] = useState(false)
@@ -2217,6 +2352,8 @@ export function HypothesisChecklist({ isNewProject = false, isInDuration = false
             <h1 className="text-2xl font-bold text-[#111827]">假设清单</h1>
             {isExited ? (
               <p className="mt-1 text-sm text-[#EF4444] font-medium">项目已退出，所有信息不可更改。</p>
+            ) : isMidInvestment ? (
+              <p className="mt-1 text-sm text-[#D97706] font-medium">项目已进入投中期，不可新建假设，现有假设仍可更改。</p>
             ) : (
               <p className="mt-1 text-sm text-[#6B7280]">管理和跟踪项目投资假设</p>
             )}
