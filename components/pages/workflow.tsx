@@ -73,6 +73,12 @@ export interface LiXiangRecord {
   time: string
 }
 
+export interface TouJueRecord {
+  details: string
+  owners: { id: string; name: string }[]
+  time: string
+}
+
 export interface PendingPhase {
   id: string
   projectId: string
@@ -89,6 +95,9 @@ export interface PendingPhase {
   // 立项-specific payload
   liXiangDetails?: string
   liXiangOwners?: { id: string; name: string }[]
+  // 投决-specific payload
+  touJueDetails?: string
+  touJueOwners?: { id: string; name: string }[]
 }
 
 type SidebarType =
@@ -657,6 +666,7 @@ interface WorkflowProps {
   onSaveAiResearchGroups?: (groups: GeneratedAiResearchGroup[]) => void
   isExited?: boolean
   liXiangRecord?: LiXiangRecord
+  touJueRecord?: TouJueRecord
 }
 
 /* ─── New Project Phase Template ─────────────── */
@@ -779,6 +789,7 @@ export function Workflow({
   onSaveAiResearchGroups,
   isExited = false,
   liXiangRecord,
+  touJueRecord,
 }: WorkflowProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
@@ -874,6 +885,14 @@ export function Workflow({
   const [liXiangOwnerSearch, setLiXiangOwnerSearch] = useState("")
   // 已立项 info dialog state
   const [showLiXiangInfoDialog, setShowLiXiangInfoDialog] = useState(false)
+
+  // 投决 dialog state
+  const [showTouJueDialog, setShowTouJueDialog] = useState(false)
+  const [touJueDetailsInput, setTouJueDetailsInput] = useState("")
+  const [touJueSelectedOwners, setTouJueSelectedOwners] = useState<Set<string>>(new Set())
+  const [touJueOwnerSearch, setTouJueOwnerSearch] = useState("")
+  // 已投决 info dialog state
+  const [showTouJueInfoDialog, setShowTouJueInfoDialog] = useState(false)
 
   // Tracking summary generation state (duration period)
   const [isTrackingGenerating, setIsTrackingGenerating] = useState(false)
@@ -1062,7 +1081,15 @@ export function Workflow({
   }
 
   function handleTouJue() {
+    setTouJueDetailsInput("")
+    setTouJueSelectedOwners(new Set())
+    setTouJueOwnerSearch("")
+    setShowTouJueDialog(true)
+  }
+
+  function handleSubmitTouJue() {
     const newPhase = createPhase(1, "投中期")
+    const selectedOwnerObjects = LIXIANG_OWNERS.filter((o) => touJueSelectedOwners.has(o.id))
     onCreatePendingPhase?.({
       id: `pending-phase-${Date.now()}`,
       projectId, projectName,
@@ -1070,6 +1097,8 @@ export function Workflow({
       changeId: `CR-P-${Date.now().toString().slice(-6)}`,
       changeName: `投决 - 进入${newPhase.fullLabel}`,
       changeType: "投决",
+      touJueDetails: touJueDetailsInput,
+      touJueOwners: selectedOwnerObjects,
       initiator: { id: "zhangwei", name: "张伟", initials: "张伟" },
       initiatedAt: new Date().toISOString().split("T")[0],
       reviewers: [
@@ -1077,6 +1106,7 @@ export function Workflow({
         { id: "lisi", name: "李四", initials: "李四" },
       ],
     })
+    setShowTouJueDialog(false)
   }
 
   function handleStartNextMidInvestmentPhase() {
@@ -5189,6 +5219,22 @@ ${logs}
 
                 return (
                   <div key={phase.id} className="flex items-start shrink-0">
+                    {/* 已投决 badge between 投前期 and 投中期 */}
+                    {touJueRecord && showGroupHeader && phase.groupLabel === "投中期" && (
+                      <div className="flex items-center shrink-0">
+                        <div className="flex flex-col items-center">
+                          <div className="mb-3 h-[22px]" />
+                          <button
+                            onClick={() => setShowTouJueInfoDialog(true)}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 transition-colors hover:bg-amber-100 whitespace-nowrap shadow-sm"
+                          >
+                            <CheckCircle className="h-3.5 w-3.5" />
+                            已投决
+                          </button>
+                        </div>
+                        <ChevronRight className="h-4 w-4 shrink-0 text-[#9CA3AF] mt-[33px]" />
+                      </div>
+                    )}
                     {/* Group header + card */}
                     <div className="flex flex-col">
                       {showGroupHeader && (
@@ -5594,6 +5640,128 @@ ${logs}
             <div>
               <p className="mb-1 text-xs font-medium text-[#6B7280]">立项时间</p>
               <p className="text-sm text-[#374151]">{liXiangRecord?.time || "—"}</p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── 投决 Dialog ───────────────────────────────── */}
+      <Dialog open={showTouJueDialog} onOpenChange={setShowTouJueDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
+                <ArrowRight className="h-4 w-4 text-amber-600" />
+              </div>
+              投决
+            </DialogTitle>
+            <DialogDescription className="text-[#6B7280]">
+              填写投决说明并选择负责人，提交后将发起变更请求。
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-5 pt-1">
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-[#374151]">投决详情</Label>
+              <Textarea
+                value={touJueDetailsInput}
+                onChange={(e) => setTouJueDetailsInput(e.target.value)}
+                placeholder="请填写本次投决的说明、决策依据及备注..."
+                rows={4}
+                className="resize-none text-sm"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-[#374151]">负责人</Label>
+              <div className="rounded-lg border border-[#E5E7EB] overflow-hidden">
+                <div className="relative border-b border-[#E5E7EB]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9CA3AF]" />
+                  <input
+                    type="text"
+                    value={touJueOwnerSearch}
+                    onChange={(e) => setTouJueOwnerSearch(e.target.value)}
+                    placeholder="搜索负责人..."
+                    className="w-full py-2.5 pl-9 pr-3 text-sm text-[#374151] placeholder:text-[#9CA3AF] outline-none bg-white"
+                  />
+                </div>
+                <div className="max-h-[220px] overflow-y-auto">
+                  {LIXIANG_OWNERS
+                    .filter((o) => o.name.includes(touJueOwnerSearch) || o.title.includes(touJueOwnerSearch))
+                    .map((owner) => (
+                    <label
+                      key={owner.id}
+                      htmlFor={`toujue-owner-${owner.id}`}
+                      className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F9FAFB] transition-colors"
+                    >
+                      <Checkbox
+                        id={`toujue-owner-${owner.id}`}
+                        checked={touJueSelectedOwners.has(owner.id)}
+                        onCheckedChange={(checked) => {
+                          setTouJueSelectedOwners((prev) => {
+                            const next = new Set(prev)
+                            if (checked) next.add(owner.id)
+                            else next.delete(owner.id)
+                            return next
+                          })
+                        }}
+                      />
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white text-xs font-medium ${owner.color}`}>
+                        {owner.initials}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-medium text-[#111827] leading-tight">{owner.name}</span>
+                        <span className="text-xs text-[#6B7280] leading-tight">{owner.title}</span>
+                      </div>
+                    </label>
+                  ))}
+                  {LIXIANG_OWNERS.filter((o) => o.name.includes(touJueOwnerSearch) || o.title.includes(touJueOwnerSearch)).length === 0 && (
+                    <div className="px-3 py-4 text-center text-sm text-[#9CA3AF]">未找到匹配的负责人</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setShowTouJueDialog(false)}>取消</Button>
+            <Button onClick={handleSubmitTouJue} className="bg-amber-600 hover:bg-amber-700">投决</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── 已投决 Info Dialog ─────────────────────────── */}
+      <Dialog open={showTouJueInfoDialog} onOpenChange={setShowTouJueInfoDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-amber-200 bg-amber-50">
+                <CheckCircle className="h-4 w-4 text-amber-600" />
+              </div>
+              投决信息
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-1">
+            <div>
+              <p className="mb-1 text-xs font-medium text-[#6B7280]">投决详情</p>
+              <p className="rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2 text-sm text-[#374151]">
+                {touJueRecord?.details || "—"}
+              </p>
+            </div>
+            <div>
+              <p className="mb-1.5 text-xs font-medium text-[#6B7280]">负责人</p>
+              <div className="flex flex-wrap gap-2">
+                {touJueRecord?.owners && touJueRecord.owners.length > 0 ? (
+                  touJueRecord.owners.map((o) => (
+                    <Badge key={o.id} className="bg-amber-50 text-amber-700 border-amber-200">
+                      {o.name}
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="text-sm text-[#9CA3AF]">—</span>
+                )}
+              </div>
+            </div>
+            <div>
+              <p className="mb-1 text-xs font-medium text-[#6B7280]">投决时间</p>
+              <p className="text-sm text-[#374151]">{touJueRecord?.time || "—"}</p>
             </div>
           </div>
         </DialogContent>
