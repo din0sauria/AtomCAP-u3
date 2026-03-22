@@ -4,13 +4,14 @@ import { useState } from "react"
 import { AppTopbar, type TopNavKey } from "@/components/app-topbar"
 import { Dashboard } from "@/components/pages/dashboard"
 import { ProjectsGrid, type Project, type PendingProject, initialProjects } from "@/components/pages/projects-grid"
-import { StrategiesGrid, type Strategy, type PendingStrategy, type StrategyHypothesis, type PendingHypothesis, type StrategyTerm, type PendingTerm, type StrategyMaterial, type PendingMaterial, initialStrategies } from "@/components/pages/strategies-grid"
+import { type Strategy, type PendingStrategy, type StrategyHypothesis, type PendingHypothesis, type StrategyTerm, type PendingTerm, type StrategyMaterial, type PendingMaterial, initialStrategies } from "@/components/pages/strategies-grid"
+import { StrategyCenter } from "@/components/pages/strategy-center"
 import { ProjectDetail } from "@/components/pages/project-detail"
 import { StrategyDetail } from "@/components/pages/strategy-detail"
 import { ChangeRequests } from "@/components/pages/change-requests"
 import { Login } from "@/components/pages/login"
-import type { Phase, PendingPhase, PendingProjectHypothesis, ProjectHypothesisFormData, GeneratedSuggestion, GeneratedTermSuggestion, PendingProjectTerm, PendingProjectMaterial, GeneratedMaterialSuggestion, GeneratedAiResearchGroup, PendingCommitteeDecision, CommitteeDecisionFormData, PendingNegotiationDecision, NegotiationDecisionFormData, PendingVerification, VerificationFormData, PendingImplementationStatus, ImplementationStatusFormData } from "@/components/pages/workflow"
-import { type HypothesisTableItem, type HypothesisDetail, type ValuePoint, type RiskPoint, getTemplateHypothesesForStrategy } from "@/components/pages/hypothesis-checklist"
+import type { Phase, PendingPhase, LiXiangRecord, TouJueRecord, HuaKuanRecord, TuiChuRecord, PendingProjectHypothesis, ProjectHypothesisFormData, GeneratedSuggestion, GeneratedTermSuggestion, PendingProjectTerm, PendingProjectMaterial, GeneratedMaterialSuggestion, GeneratedAiResearchGroup, PendingCommitteeDecision, CommitteeDecisionFormData, PendingNegotiationDecision, NegotiationDecisionFormData, PendingVerification, VerificationFormData, PendingImplementationStatus, ImplementationStatusFormData } from "@/components/pages/workflow"
+import { type HypothesisTableItem, type HypothesisDetail, type ValuePoint, type RiskPoint, getTemplateHypothesesForStrategy, midInvestmentHypotheses } from "@/components/pages/hypothesis-checklist"
 import { type TermTableItem, type TermDetail, getTemplateTermsForStrategy } from "@/components/pages/term-sheet"
 import { getTemplateMaterialsForStrategy } from "@/components/pages/project-materials"
 import { getTrackStrategyHypothesisTemplate } from "@/components/pages/strategy-hypotheses"
@@ -34,6 +35,15 @@ export default function Page() {
   // Workflow phases state per project - keyed by projectId
   const [projectPhases, setProjectPhases] = useState<Record<string, Phase[]>>({})
   const [pendingPhases, setPendingPhases] = useState<PendingPhase[]>([])
+  const [exitedProjects, setExitedProjects] = useState<Record<string, boolean>>({})
+  // 立项 record per new project (set when a 立项 pending phase is approved)
+  const [liXiangRecords, setLiXiangRecords] = useState<Record<string, LiXiangRecord>>({})
+  // 投决 record per new project (set when a 投决 pending phase is approved)
+  const [touJueRecords, setTouJueRecords] = useState<Record<string, TouJueRecord>>({})
+  // 划款 record per new project (set when a 划款 pending phase is approved)
+  const [huaKuanRecords, setHuaKuanRecords] = useState<Record<string, HuaKuanRecord>>({})
+  // 退出 record per new project (set when a 退出 pending phase is approved)
+  const [tuiChuRecords, setTuiChuRecords] = useState<Record<string, TuiChuRecord>>({})
   // Strategy hypotheses state - keyed by strategyId
   const [strategyHypotheses, setStrategyHypotheses] = useState<Record<string, StrategyHypothesis[]>>({})
   const [pendingHypotheses, setPendingHypotheses] = useState<PendingHypothesis[]>([])
@@ -234,7 +244,7 @@ export default function Page() {
       const uploadedAtCreation: StrategyMaterial[] = (pending.uploadedFiles || []).map((f) => ({
         id: `uploaded-${f.id}-${Date.now()}`,
         strategyId: sid,
-        name: f.name,
+        name: f.name.replace(/\.[^.]+$/, ""), // strip file extension (e.g. "闫俊杰_CV.pdf" → "闫俊杰_CV")
         format: f.format,
         size: f.size,
         category: "",
@@ -312,18 +322,84 @@ export default function Page() {
           : p
       )
       
+      // 退出: just complete active phase + mark project as exited, no new phase added
+      if (changeType === "退出") {
+        setProjectPhases({ ...projectPhases, [projectId]: updatedPhases })
+        setExitedProjects((prev) => ({ ...prev, [projectId]: true }))
+        setTuiChuRecords((prev) => ({
+          ...prev,
+          [projectId]: {
+            details: pending.tuiChuDetails || "",
+            owners: pending.tuiChuOwners || [],
+            time: new Date().toISOString().split("T")[0],
+          },
+        }))
+        setPendingPhases(pendingPhases.filter((p) => p.id !== id))
+        setView({ type: "project-detail", projectId })
+        return
+      }
+
       // Add new phase with generated id
+      const prefixMap: Record<string, string> = {
+        "设立期": "setup", "存续期": "duration",
+        "投前期": "pre-inv", "投中期": "mid-inv", "投后期": "post-inv",
+      }
       const newPhase: Phase = {
-        id: `${phase.groupLabel === "设立期" ? "setup" : "duration"}-${Date.now()}`,
+        id: `${prefixMap[phase.groupLabel] ?? "phase"}-${Date.now()}`,
         ...phase,
       }
-      
+
       setProjectPhases({
         ...projectPhases,
         [projectId]: [...updatedPhases, newPhase],
       })
+      // When a 立项 phase is approved, store the 立项 record for display in the workflow
+      if (changeType === "立项") {
+        setLiXiangRecords((prev) => ({
+          ...prev,
+          [projectId]: {
+            details: pending.liXiangDetails || "",
+            owners: pending.liXiangOwners || [],
+            time: new Date().toISOString().split("T")[0],
+          },
+        }))
+      }
+      // When a 投决 phase is approved, store the 投决 record for display in the workflow
+      // and add mid-investment hypotheses with statuses (first 18 verified, rest risky)
+      if (changeType === "投决") {
+        setTouJueRecords((prev) => ({
+          ...prev,
+          [projectId]: {
+            details: pending.touJueDetails || "",
+            owners: pending.touJueOwners || [],
+            time: new Date().toISOString().split("T")[0],
+          },
+        }))
+        // Add mid-investment hypotheses (ai-h8 to ai-h21) and set statuses:
+        // first 18 → verified (成立), rest → risky (不成立)
+        const currentHypotheses = projectHypotheses[projectId] || []
+        const combined = [...currentHypotheses, ...midInvestmentHypotheses]
+        const withStatuses = combined.map((h, idx) => ({
+          ...h,
+          status: (idx < 18 ? "verified" : "risky") as "verified" | "pending" | "risky",
+        }))
+        setProjectHypotheses((prev) => ({ ...prev, [projectId]: withStatuses }))
+      }
+      // When a 划款 phase is approved, store the 划款 record for display in the workflow
+      if (changeType === "划款") {
+        setHuaKuanRecords((prev) => ({
+          ...prev,
+          [projectId]: {
+            details: pending.huaKuanDetails || "",
+            currency: pending.huaKuanCurrency || "USD",
+            amount: pending.huaKuanAmount || "",
+            owners: pending.huaKuanOwners || [],
+            time: new Date().toISOString().split("T")[0],
+          },
+        }))
+      }
       setPendingPhases(pendingPhases.filter((p) => p.id !== id))
-      
+
       // Navigate back to project detail
       setView({ type: "project-detail", projectId })
     }
@@ -949,7 +1025,7 @@ export default function Page() {
         strategyId: "",
         name: material.name,
         format: material.format,
-        size: "—",
+        size: material.size || "—",
         description: material.description,
         category: material.category,
         owner: "张伟",
@@ -1088,7 +1164,7 @@ export default function Page() {
           />
         )}
         {view.type === "strategies" && (
-          <StrategiesGrid 
+          <StrategyCenter
             strategies={strategies}
             onStrategiesChange={setStrategies}
             onSelectStrategy={handleSelectStrategy}
@@ -1167,6 +1243,11 @@ export default function Page() {
   onCreateNegotiationDecision={(termId, termName, data) => handleCreateNegotiationDecision(view.projectId, termId, termName, data)}
   onCreateVerification={(hypothesisId, hypothesisName, data) => handleCreateVerification(view.projectId, hypothesisId, hypothesisName, data)}
   onCreateImplementationStatus={(termId, termName, data) => handleCreateImplementationStatus(view.projectId, termId, termName, data)}
+  isExited={exitedProjects[view.projectId] === true}
+  liXiangRecord={liXiangRecords[view.projectId]}
+  touJueRecord={touJueRecords[view.projectId]}
+  huaKuanRecord={huaKuanRecords[view.projectId]}
+  tuiChuRecord={tuiChuRecords[view.projectId]}
   />
         )}
         {view.type === "strategy-detail" && (
