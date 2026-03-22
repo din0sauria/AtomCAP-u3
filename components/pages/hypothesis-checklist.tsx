@@ -1004,6 +1004,10 @@ const aiInfrastructureHypotheses: HypothesisTableItem[] = [
     updatedAt: "2026-02-28",
     status: "pending",
   },
+]
+
+/** 投中期新增假设 — 仅在投决通过后合并到项目假设清单 */
+export const midInvestmentHypotheses: HypothesisTableItem[] = [
   {
     id: "ai-h8",
     direction: "团队能力",

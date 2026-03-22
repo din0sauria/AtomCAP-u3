@@ -11,7 +11,7 @@ import { StrategyDetail } from "@/components/pages/strategy-detail"
 import { ChangeRequests } from "@/components/pages/change-requests"
 import { Login } from "@/components/pages/login"
 import type { Phase, PendingPhase, LiXiangRecord, TouJueRecord, HuaKuanRecord, TuiChuRecord, PendingProjectHypothesis, ProjectHypothesisFormData, GeneratedSuggestion, GeneratedTermSuggestion, PendingProjectTerm, PendingProjectMaterial, GeneratedMaterialSuggestion, GeneratedAiResearchGroup, PendingCommitteeDecision, CommitteeDecisionFormData, PendingNegotiationDecision, NegotiationDecisionFormData, PendingVerification, VerificationFormData, PendingImplementationStatus, ImplementationStatusFormData } from "@/components/pages/workflow"
-import { type HypothesisTableItem, type HypothesisDetail, type ValuePoint, type RiskPoint, getTemplateHypothesesForStrategy } from "@/components/pages/hypothesis-checklist"
+import { type HypothesisTableItem, type HypothesisDetail, type ValuePoint, type RiskPoint, getTemplateHypothesesForStrategy, midInvestmentHypotheses } from "@/components/pages/hypothesis-checklist"
 import { type TermTableItem, type TermDetail, getTemplateTermsForStrategy } from "@/components/pages/term-sheet"
 import { getTemplateMaterialsForStrategy } from "@/components/pages/project-materials"
 import { getTrackStrategyHypothesisTemplate } from "@/components/pages/strategy-hypotheses"
@@ -375,13 +375,10 @@ export default function Page() {
             time: new Date().toISOString().split("T")[0],
           },
         }))
-        // Add the new mid-investment hypotheses (ai-h8 to ai-h21) from template
-        // and set statuses: first 18 hypotheses → verified (成立), rest → risky (不成立)
-        const allTemplateHypotheses = getTemplateHypothesesForStrategy("1")
+        // Add mid-investment hypotheses (ai-h8 to ai-h21) and set statuses:
+        // first 18 → verified (成立), rest → risky (不成立)
         const currentHypotheses = projectHypotheses[projectId] || []
-        const existingIds = new Set(currentHypotheses.map((h) => h.id))
-        const newHypotheses = allTemplateHypotheses.filter((h) => !existingIds.has(h.id))
-        const combined = [...currentHypotheses, ...newHypotheses]
+        const combined = [...currentHypotheses, ...midInvestmentHypotheses]
         const withStatuses = combined.map((h, idx) => ({
           ...h,
           status: (idx < 18 ? "verified" : "risky") as "verified" | "pending" | "risky",
