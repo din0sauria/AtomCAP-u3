@@ -24,6 +24,7 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
+  Search,
 } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -698,11 +699,13 @@ function createNewPhase(phaseNumber: number, isSetup: boolean): Phase {
 
 /* ─── 立项 Owner Options ──────────────────────── */
 const LIXIANG_OWNERS = [
-  { id: "zhangwei", name: "张伟" },
-  { id: "lisi",     name: "李四" },
-  { id: "wangfang", name: "王芳" },
-  { id: "zhaoqiang",name: "赵强" },
-  { id: "chenzong", name: "陈总" },
+  { id: "zhangwei",  name: "张伟", title: "投资经理",   initials: "张", color: "bg-blue-600" },
+  { id: "lisi",      name: "李四", title: "高级分析师", initials: "李", color: "bg-blue-600" },
+  { id: "wangfang",  name: "王芳", title: "投资总监",   initials: "王", color: "bg-blue-600" },
+  { id: "zhaoqiang", name: "赵强", title: "风控经理",   initials: "赵", color: "bg-blue-600" },
+  { id: "chenzong",  name: "陈总", title: "合伙人",     initials: "陈", color: "bg-blue-600" },
+  { id: "liuyan",    name: "刘燕", title: "法务顾问",   initials: "刘", color: "bg-blue-600" },
+  { id: "sunming",   name: "孙明", title: "财务总监",   initials: "孙", color: "bg-blue-600" },
 ]
 
 /* ─── Core Team Material Mock File Structure ─── */
@@ -868,6 +871,7 @@ export function Workflow({
   const [showLiXiangDialog, setShowLiXiangDialog] = useState(false)
   const [liXiangDetailsInput, setLiXiangDetailsInput] = useState("")
   const [liXiangSelectedOwners, setLiXiangSelectedOwners] = useState<Set<string>>(new Set())
+  const [liXiangOwnerSearch, setLiXiangOwnerSearch] = useState("")
   // 已立项 info dialog state
   const [showLiXiangInfoDialog, setShowLiXiangInfoDialog] = useState(false)
 
@@ -1013,6 +1017,7 @@ export function Workflow({
   function handleLiXiang() {
     setLiXiangDetailsInput("")
     setLiXiangSelectedOwners(new Set())
+    setLiXiangOwnerSearch("")
     setShowLiXiangDialog(true)
   }
 
@@ -4973,29 +4978,53 @@ ${logs}
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-medium text-[#374151]">负责人</Label>
-              <div className="space-y-2 rounded-lg border border-[#E5E7EB] p-3">
-                {LIXIANG_OWNERS.map((owner) => (
-                  <div key={owner.id} className="flex items-center gap-2">
-                    <Checkbox
-                      id={`lixiang-owner-empty-${owner.id}`}
-                      checked={liXiangSelectedOwners.has(owner.id)}
-                      onCheckedChange={(checked) => {
-                        setLiXiangSelectedOwners((prev) => {
-                          const next = new Set(prev)
-                          if (checked) next.add(owner.id)
-                          else next.delete(owner.id)
-                          return next
-                        })
-                      }}
-                    />
-                    <Label
+              <div className="rounded-lg border border-[#E5E7EB] overflow-hidden">
+                {/* Search input */}
+                <div className="relative border-b border-[#E5E7EB]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9CA3AF]" />
+                  <input
+                    type="text"
+                    value={liXiangOwnerSearch}
+                    onChange={(e) => setLiXiangOwnerSearch(e.target.value)}
+                    placeholder="搜索负责人..."
+                    className="w-full py-2.5 pl-9 pr-3 text-sm text-[#374151] placeholder:text-[#9CA3AF] outline-none bg-white"
+                  />
+                </div>
+                {/* Owner list */}
+                <div className="max-h-[220px] overflow-y-auto">
+                  {LIXIANG_OWNERS
+                    .filter((o) => o.name.includes(liXiangOwnerSearch) || o.title.includes(liXiangOwnerSearch))
+                    .map((owner) => (
+                    <label
+                      key={owner.id}
                       htmlFor={`lixiang-owner-empty-${owner.id}`}
-                      className="text-sm text-[#374151] cursor-pointer font-normal"
+                      className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F9FAFB] transition-colors"
                     >
-                      {owner.name}
-                    </Label>
-                  </div>
-                ))}
+                      <Checkbox
+                        id={`lixiang-owner-empty-${owner.id}`}
+                        checked={liXiangSelectedOwners.has(owner.id)}
+                        onCheckedChange={(checked) => {
+                          setLiXiangSelectedOwners((prev) => {
+                            const next = new Set(prev)
+                            if (checked) next.add(owner.id)
+                            else next.delete(owner.id)
+                            return next
+                          })
+                        }}
+                      />
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white text-xs font-medium ${owner.color}`}>
+                        {owner.initials}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-medium text-[#111827] leading-tight">{owner.name}</span>
+                        <span className="text-xs text-[#6B7280] leading-tight">{owner.title}</span>
+                      </div>
+                    </label>
+                  ))}
+                  {LIXIANG_OWNERS.filter((o) => o.name.includes(liXiangOwnerSearch) || o.title.includes(liXiangOwnerSearch)).length === 0 && (
+                    <div className="px-3 py-4 text-center text-sm text-[#9CA3AF]">未找到匹配的负责人</div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -5473,29 +5502,53 @@ ${logs}
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-medium text-[#374151]">负责人</Label>
-              <div className="space-y-2 rounded-lg border border-[#E5E7EB] p-3">
-                {LIXIANG_OWNERS.map((owner) => (
-                  <div key={owner.id} className="flex items-center gap-2">
-                    <Checkbox
-                      id={`lixiang-owner-${owner.id}`}
-                      checked={liXiangSelectedOwners.has(owner.id)}
-                      onCheckedChange={(checked) => {
-                        setLiXiangSelectedOwners((prev) => {
-                          const next = new Set(prev)
-                          if (checked) next.add(owner.id)
-                          else next.delete(owner.id)
-                          return next
-                        })
-                      }}
-                    />
-                    <Label
+              <div className="rounded-lg border border-[#E5E7EB] overflow-hidden">
+                {/* Search input */}
+                <div className="relative border-b border-[#E5E7EB]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9CA3AF]" />
+                  <input
+                    type="text"
+                    value={liXiangOwnerSearch}
+                    onChange={(e) => setLiXiangOwnerSearch(e.target.value)}
+                    placeholder="搜索负责人..."
+                    className="w-full py-2.5 pl-9 pr-3 text-sm text-[#374151] placeholder:text-[#9CA3AF] outline-none bg-white"
+                  />
+                </div>
+                {/* Owner list */}
+                <div className="max-h-[220px] overflow-y-auto">
+                  {LIXIANG_OWNERS
+                    .filter((o) => o.name.includes(liXiangOwnerSearch) || o.title.includes(liXiangOwnerSearch))
+                    .map((owner) => (
+                    <label
+                      key={owner.id}
                       htmlFor={`lixiang-owner-${owner.id}`}
-                      className="text-sm text-[#374151] cursor-pointer font-normal"
+                      className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F9FAFB] transition-colors"
                     >
-                      {owner.name}
-                    </Label>
-                  </div>
-                ))}
+                      <Checkbox
+                        id={`lixiang-owner-${owner.id}`}
+                        checked={liXiangSelectedOwners.has(owner.id)}
+                        onCheckedChange={(checked) => {
+                          setLiXiangSelectedOwners((prev) => {
+                            const next = new Set(prev)
+                            if (checked) next.add(owner.id)
+                            else next.delete(owner.id)
+                            return next
+                          })
+                        }}
+                      />
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white text-xs font-medium ${owner.color}`}>
+                        {owner.initials}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-medium text-[#111827] leading-tight">{owner.name}</span>
+                        <span className="text-xs text-[#6B7280] leading-tight">{owner.title}</span>
+                      </div>
+                    </label>
+                  ))}
+                  {LIXIANG_OWNERS.filter((o) => o.name.includes(liXiangOwnerSearch) || o.title.includes(liXiangOwnerSearch)).length === 0 && (
+                    <div className="px-3 py-4 text-center text-sm text-[#9CA3AF]">未找到匹配的负责人</div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
