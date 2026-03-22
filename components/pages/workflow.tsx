@@ -79,6 +79,13 @@ export interface TouJueRecord {
   time: string
 }
 
+export interface HuaKuanRecord {
+  details: string
+  amount: string
+  owners: { id: string; name: string }[]
+  time: string
+}
+
 export interface PendingPhase {
   id: string
   projectId: string
@@ -98,6 +105,10 @@ export interface PendingPhase {
   // 投决-specific payload
   touJueDetails?: string
   touJueOwners?: { id: string; name: string }[]
+  // 划款-specific payload
+  huaKuanDetails?: string
+  huaKuanAmount?: string
+  huaKuanOwners?: { id: string; name: string }[]
 }
 
 type SidebarType =
@@ -667,6 +678,7 @@ interface WorkflowProps {
   isExited?: boolean
   liXiangRecord?: LiXiangRecord
   touJueRecord?: TouJueRecord
+  huaKuanRecord?: HuaKuanRecord
 }
 
 /* ─── New Project Phase Template ─────────────── */
@@ -790,6 +802,7 @@ export function Workflow({
   isExited = false,
   liXiangRecord,
   touJueRecord,
+  huaKuanRecord,
 }: WorkflowProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
@@ -893,6 +906,15 @@ export function Workflow({
   const [touJueOwnerSearch, setTouJueOwnerSearch] = useState("")
   // 已投决 info dialog state
   const [showTouJueInfoDialog, setShowTouJueInfoDialog] = useState(false)
+
+  // 划款 dialog state
+  const [showHuaKuanDialog, setShowHuaKuanDialog] = useState(false)
+  const [huaKuanDetailsInput, setHuaKuanDetailsInput] = useState("")
+  const [huaKuanAmountInput, setHuaKuanAmountInput] = useState("")
+  const [huaKuanSelectedOwners, setHuaKuanSelectedOwners] = useState<Set<string>>(new Set())
+  const [huaKuanOwnerSearch, setHuaKuanOwnerSearch] = useState("")
+  // 已划款 info dialog state
+  const [showHuaKuanInfoDialog, setShowHuaKuanInfoDialog] = useState(false)
 
   // Tracking summary generation state (duration period)
   const [isTrackingGenerating, setIsTrackingGenerating] = useState(false)
@@ -1146,7 +1168,16 @@ export function Workflow({
   }
 
   function handleDiKuan() {
+    setHuaKuanDetailsInput("")
+    setHuaKuanAmountInput("")
+    setHuaKuanSelectedOwners(new Set())
+    setHuaKuanOwnerSearch("")
+    setShowHuaKuanDialog(true)
+  }
+
+  function handleSubmitHuaKuan() {
     const newPhase = createPhase(1, "投后期")
+    const selectedOwnerObjects = LIXIANG_OWNERS.filter((o) => huaKuanSelectedOwners.has(o.id))
     onCreatePendingPhase?.({
       id: `pending-phase-${Date.now()}`,
       projectId, projectName,
@@ -1154,6 +1185,9 @@ export function Workflow({
       changeId: `CR-P-${Date.now().toString().slice(-6)}`,
       changeName: `划款 - 进入${newPhase.fullLabel}`,
       changeType: "划款",
+      huaKuanDetails: huaKuanDetailsInput,
+      huaKuanAmount: huaKuanAmountInput,
+      huaKuanOwners: selectedOwnerObjects,
       initiator: { id: "zhangwei", name: "张伟", initials: "张伟" },
       initiatedAt: new Date().toISOString().split("T")[0],
       reviewers: [
@@ -1161,6 +1195,7 @@ export function Workflow({
         { id: "lisi", name: "李四", initials: "李四" },
       ],
     })
+    setShowHuaKuanDialog(false)
   }
 
   function handleTuiChu() {
@@ -5220,6 +5255,7 @@ ${logs}
                 return (
                   <div key={phase.id} className="flex items-start shrink-0">
                     {/* 已投决 badge between 投前期 and 投中期 */}
+                    {/* 已投决 badge between 投前期 and 投中期 */}
                     {touJueRecord && showGroupHeader && phase.groupLabel === "投中期" && (
                       <div className="flex items-center shrink-0">
                         <div className="flex flex-col items-center">
@@ -5230,6 +5266,22 @@ ${logs}
                           >
                             <CheckCircle className="h-3.5 w-3.5" />
                             已投决
+                          </button>
+                        </div>
+                        <ChevronRight className="h-4 w-4 shrink-0 text-[#9CA3AF] mt-[33px]" />
+                      </div>
+                    )}
+                    {/* 已划款 badge between 投中期 and 投后期 */}
+                    {huaKuanRecord && showGroupHeader && phase.groupLabel === "投后期" && (
+                      <div className="flex items-center shrink-0">
+                        <div className="flex flex-col items-center">
+                          <div className="mb-3 h-[22px]" />
+                          <button
+                            onClick={() => setShowHuaKuanInfoDialog(true)}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-700 transition-colors hover:bg-orange-100 whitespace-nowrap shadow-sm"
+                          >
+                            <CheckCircle className="h-3.5 w-3.5" />
+                            已划款
                           </button>
                         </div>
                         <ChevronRight className="h-4 w-4 shrink-0 text-[#9CA3AF] mt-[33px]" />
@@ -5762,6 +5814,147 @@ ${logs}
             <div>
               <p className="mb-1 text-xs font-medium text-[#6B7280]">投决时间</p>
               <p className="text-sm text-[#374151]">{touJueRecord?.time || "—"}</p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── 划款 Dialog ───────────────────────────────── */}
+      <Dialog open={showHuaKuanDialog} onOpenChange={setShowHuaKuanDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-50">
+                <CreditCard className="h-4 w-4 text-orange-600" />
+              </div>
+              划款
+            </DialogTitle>
+            <DialogDescription className="text-[#6B7280]">
+              填写划款说明、金额并选择负责人，提交后将发起变更请求。
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-5 pt-1">
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-[#374151]">划款详情</Label>
+              <Textarea
+                value={huaKuanDetailsInput}
+                onChange={(e) => setHuaKuanDetailsInput(e.target.value)}
+                placeholder="请填写本次划款的说明、用途及备注..."
+                rows={3}
+                className="resize-none text-sm"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-[#374151]">划款金额</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#6B7280]">¥</span>
+                <Input
+                  type="text"
+                  value={huaKuanAmountInput}
+                  onChange={(e) => setHuaKuanAmountInput(e.target.value)}
+                  placeholder="请输入划款金额"
+                  className="pl-7 text-sm"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-[#374151]">负责人</Label>
+              <div className="rounded-lg border border-[#E5E7EB] overflow-hidden">
+                <div className="relative border-b border-[#E5E7EB]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9CA3AF]" />
+                  <input
+                    type="text"
+                    value={huaKuanOwnerSearch}
+                    onChange={(e) => setHuaKuanOwnerSearch(e.target.value)}
+                    placeholder="搜索负责人..."
+                    className="w-full py-2.5 pl-9 pr-3 text-sm text-[#374151] placeholder:text-[#9CA3AF] outline-none bg-white"
+                  />
+                </div>
+                <div className="max-h-[220px] overflow-y-auto">
+                  {LIXIANG_OWNERS
+                    .filter((o) => o.name.includes(huaKuanOwnerSearch) || o.title.includes(huaKuanOwnerSearch))
+                    .map((owner) => (
+                    <label
+                      key={owner.id}
+                      htmlFor={`huakuan-owner-${owner.id}`}
+                      className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#F9FAFB] transition-colors"
+                    >
+                      <Checkbox
+                        id={`huakuan-owner-${owner.id}`}
+                        checked={huaKuanSelectedOwners.has(owner.id)}
+                        onCheckedChange={(checked) => {
+                          setHuaKuanSelectedOwners((prev) => {
+                            const next = new Set(prev)
+                            if (checked) next.add(owner.id)
+                            else next.delete(owner.id)
+                            return next
+                          })
+                        }}
+                      />
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white text-xs font-medium ${owner.color}`}>
+                        {owner.initials}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-medium text-[#111827] leading-tight">{owner.name}</span>
+                        <span className="text-xs text-[#6B7280] leading-tight">{owner.title}</span>
+                      </div>
+                    </label>
+                  ))}
+                  {LIXIANG_OWNERS.filter((o) => o.name.includes(huaKuanOwnerSearch) || o.title.includes(huaKuanOwnerSearch)).length === 0 && (
+                    <div className="px-3 py-4 text-center text-sm text-[#9CA3AF]">未找到匹配的负责人</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setShowHuaKuanDialog(false)}>取消</Button>
+            <Button onClick={handleSubmitHuaKuan} className="bg-orange-600 hover:bg-orange-700">划款</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── 已划款 Info Dialog ─────────────────────────── */}
+      <Dialog open={showHuaKuanInfoDialog} onOpenChange={setShowHuaKuanInfoDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-orange-200 bg-orange-50">
+                <CheckCircle className="h-4 w-4 text-orange-600" />
+              </div>
+              划款信息
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-1">
+            <div>
+              <p className="mb-1 text-xs font-medium text-[#6B7280]">划款详情</p>
+              <p className="rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2 text-sm text-[#374151]">
+                {huaKuanRecord?.details || "—"}
+              </p>
+            </div>
+            <div>
+              <p className="mb-1 text-xs font-medium text-[#6B7280]">划款金额</p>
+              <p className="rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2 text-sm font-semibold text-[#374151]">
+                {huaKuanRecord?.amount ? `¥${huaKuanRecord.amount}` : "—"}
+              </p>
+            </div>
+            <div>
+              <p className="mb-1.5 text-xs font-medium text-[#6B7280]">负责人</p>
+              <div className="flex flex-wrap gap-2">
+                {huaKuanRecord?.owners && huaKuanRecord.owners.length > 0 ? (
+                  huaKuanRecord.owners.map((o) => (
+                    <Badge key={o.id} className="bg-orange-50 text-orange-700 border-orange-200">
+                      {o.name}
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="text-sm text-[#9CA3AF]">—</span>
+                )}
+              </div>
+            </div>
+            <div>
+              <p className="mb-1 text-xs font-medium text-[#6B7280]">划款时间</p>
+              <p className="text-sm text-[#374151]">{huaKuanRecord?.time || "—"}</p>
             </div>
           </div>
         </DialogContent>
