@@ -639,15 +639,20 @@ export function TermSheet({ isNewProject = false, isInDuration = false, isExited
       : termTableData
 
   // Filter data
-  const filteredData = sourceData.filter((item) => {
-    const query = searchQuery.toLowerCase()
-    return (
-      item.direction.toLowerCase().includes(query) ||
-      item.category.toLowerCase().includes(query) ||
-      item.name.toLowerCase().includes(query) ||
-      item.owner.toLowerCase().includes(query)
-    )
-  })
+  const filteredData = sourceData
+    .filter((item) => {
+      const query = searchQuery.toLowerCase()
+      return (
+        item.direction.toLowerCase().includes(query) ||
+        item.category.toLowerCase().includes(query) ||
+        item.name.toLowerCase().includes(query) ||
+        item.owner.toLowerCase().includes(query)
+      )
+    })
+    .sort((a, b) => {
+      const order: Record<string, number> = { approved: 0, rejected: 1, pending: 2 }
+      return (order[a.status] ?? 2) - (order[b.status] ?? 2)
+    })
 
   // Get detail for selected item — extraDetails takes priority over built-in mock data
   const selectedDetail = selectedId
