@@ -4926,6 +4926,7 @@ ${logs}
   // Show empty state for new projects with no phases started
   if (isNewProject && projectPhases.length === 0) {
     return (
+      <>
       <div className="flex h-full items-center justify-center bg-[#F9FAFB]">
         <div className="text-center max-w-md px-6">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#EFF6FF]">
@@ -4944,6 +4945,67 @@ ${logs}
           </button>
         </div>
       </div>
+
+      {/* 立项 Dialog (must be here since this is an early-return branch) */}
+      <Dialog open={showLiXiangDialog} onOpenChange={setShowLiXiangDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
+                <GitBranch className="h-4 w-4 text-blue-600" />
+              </div>
+              立项
+            </DialogTitle>
+            <DialogDescription className="text-[#6B7280]">
+              填写立项说明并选择负责人，提交后将发起变更请求。
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-5 pt-1">
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-[#374151]">立项详情</Label>
+              <Textarea
+                value={liXiangDetailsInput}
+                onChange={(e) => setLiXiangDetailsInput(e.target.value)}
+                placeholder="请填写本次立项的说明、目标及背景..."
+                rows={4}
+                className="resize-none text-sm"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-[#374151]">负责人</Label>
+              <div className="space-y-2 rounded-lg border border-[#E5E7EB] p-3">
+                {LIXIANG_OWNERS.map((owner) => (
+                  <div key={owner.id} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`lixiang-owner-empty-${owner.id}`}
+                      checked={liXiangSelectedOwners.has(owner.id)}
+                      onCheckedChange={(checked) => {
+                        setLiXiangSelectedOwners((prev) => {
+                          const next = new Set(prev)
+                          if (checked) next.add(owner.id)
+                          else next.delete(owner.id)
+                          return next
+                        })
+                      }}
+                    />
+                    <Label
+                      htmlFor={`lixiang-owner-empty-${owner.id}`}
+                      className="text-sm text-[#374151] cursor-pointer font-normal"
+                    >
+                      {owner.name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setShowLiXiangDialog(false)}>取消</Button>
+            <Button onClick={handleSubmitLiXiang}>立项</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      </>
     )
   }
 
