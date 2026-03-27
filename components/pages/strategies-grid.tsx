@@ -29,8 +29,6 @@ const availableIcons = [
 export interface Strategy {
   id: string
   name: string
-  type: "主题策略" | "赛道策略"
-  typeColor: string
   icon: typeof Cpu
   iconBg: string
   description: string
@@ -134,8 +132,6 @@ export const initialStrategies: Strategy[] = [
   {
     id: "1",
     name: "AI基础设施",
-    type: "主题策略",
-    typeColor: "bg-blue-50 text-blue-700 border-blue-200",
     icon: Cpu,
     iconBg: "bg-blue-100 text-blue-600",
     description: "聚焦AI算力、模型训练框架和基础软件生态投资",
@@ -150,8 +146,6 @@ export const initialStrategies: Strategy[] = [
   {
     id: "2",
     name: "大模型应用",
-    type: "赛道策略",
-    typeColor: "bg-violet-50 text-violet-700 border-violet-200",
     icon: Target,
     iconBg: "bg-violet-100 text-violet-600",
     description: "关注大语言模型的企业级和消费级应用落地场景",
@@ -167,8 +161,6 @@ export const initialStrategies: Strategy[] = [
   {
     id: "7",
     name: "企业数字化",
-    type: "主题策略",
-    typeColor: "bg-blue-50 text-blue-700 border-blue-200",
     icon: Building2,
     iconBg: "bg-emerald-100 text-emerald-600",
     description: "聚焦企业数字化转型、智能化升级和业务流程优化",
@@ -182,8 +174,6 @@ export const initialStrategies: Strategy[] = [
   {
     id: "3",
     name: "企业服务SaaS",
-    type: "赛道策略",
-    typeColor: "bg-violet-50 text-violet-700 border-violet-200",
     icon: Target,
     iconBg: "bg-emerald-100 text-emerald-600",
     description: "覆盖CRM、ERP、协同办公等企业数字化转型赛道",
@@ -198,8 +188,6 @@ export const initialStrategies: Strategy[] = [
   {
     id: "4",
     name: "生物科技",
-    type: "主题策略",
-    typeColor: "bg-blue-50 text-blue-700 border-blue-200",
     icon: Zap,
     iconBg: "bg-rose-100 text-rose-600",
     description: "布局AI制药、基因治疗和精准医疗等前沿领域",
@@ -212,8 +200,6 @@ export const initialStrategies: Strategy[] = [
   {
     id: "8",
     name: "清洁能源",
-    type: "主题策略",
-    typeColor: "bg-blue-50 text-blue-700 border-blue-200",
     icon: Leaf,
     iconBg: "bg-lime-100 text-lime-600",
     description: "聚焦新能源、储能技术和绿色低碳产业投资",
@@ -226,8 +212,6 @@ export const initialStrategies: Strategy[] = [
   {
     id: "5",
     name: "新能源汽车",
-    type: "赛道策略",
-    typeColor: "bg-violet-50 text-violet-700 border-violet-200",
     icon: Zap,
     iconBg: "bg-lime-100 text-lime-600",
     description: "智能驾驶、动力电池和充电基础设施全产业链投资",
@@ -242,8 +226,6 @@ export const initialStrategies: Strategy[] = [
   {
     id: "9",
     name: "国际贸易",
-    type: "主题策略",
-    typeColor: "bg-blue-50 text-blue-700 border-blue-200",
     icon: TrendingUp,
     iconBg: "bg-amber-100 text-amber-600",
     description: "聚焦跨境贸易、全球供应链和国际化业务拓展",
@@ -256,8 +238,6 @@ export const initialStrategies: Strategy[] = [
   {
     id: "6",
     name: "出海电商",
-    type: "赛道策略",
-    typeColor: "bg-violet-50 text-violet-700 border-violet-200",
     icon: Target,
     iconBg: "bg-amber-100 text-amber-600",
     description: "跨境电商平台、品牌出海和供应链服务生态",
@@ -506,8 +486,6 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
   function handleSave() {
     onSave({
       name: name.trim(),
-      type: "主题策略",
-      typeColor: "bg-blue-50 text-blue-700 border-blue-200",
       icon: Cpu,
       iconBg: "bg-blue-100 text-blue-600",
       description: description.trim() || "暂无策略简介",
