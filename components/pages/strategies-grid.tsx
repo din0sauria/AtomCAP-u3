@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Briefcase, Search, Plus, Target, TrendingUp, Building2, Cpu, Zap, Leaf, X, Check, MoreHorizontal, ChevronRight, ArrowLeft } from "lucide-react"
+import { Briefcase, Search, Plus, Target, TrendingUp, Building2, Cpu, Zap, Leaf, X, Check, MoreHorizontal, ChevronRight, ArrowLeft, Upload, Folder } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
@@ -568,6 +568,52 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
   const [selectedRefStrategies, setSelectedRefStrategies] = useState<string[]>(["1"])
   const [selectedFramework, setSelectedFramework] = useState("科技成长型框架")
 
+  // Step 2 state
+  const [showFileBrowser, setShowFileBrowser] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; size: string; type: string }[]>([])
+  const [isUploading, setIsUploading] = useState(false)
+  const [aiAutoResearch, setAiAutoResearch] = useState(true)
+  const [selectedBrowserFiles, setSelectedBrowserFiles] = useState<string[]>([])
+
+  // Mock directory files
+  const MOCK_DIRECTORY_FILES = [
+    { id: "f1", name: "GPU_AI芯片行业全景报告_2024.pdf", size: "6.8 MB", type: "PDF" },
+    { id: "f2", name: "全球算力基础设施市场规模分析.pdf", size: "4.3 MB", type: "PDF" },
+    { id: "f3", name: "主流AI训练框架技术对比.docx", size: "2.1 MB", type: "DOCX" },
+    { id: "f4", name: "云服务商GPU算力价格对比表.xlsx", size: "0.8 MB", type: "XLSX" },
+    { id: "f5", name: "AI基础设施投融资趋势报告_2023-2024.pdf", size: "5.6 MB", type: "PDF" },
+    { id: "f6", name: "数据中心能耗与可持续发展白皮书.pdf", size: "3.2 MB", type: "PDF" },
+  ]
+
+  function handleSelectAllFiles() {
+    if (selectedBrowserFiles.length === MOCK_DIRECTORY_FILES.length) {
+      setSelectedBrowserFiles([])
+    } else {
+      setSelectedBrowserFiles(MOCK_DIRECTORY_FILES.map((f) => f.id))
+    }
+  }
+
+  function handleConfirmUpload() {
+    if (selectedBrowserFiles.length === 0) return
+    setIsUploading(true)
+    // Simulate upload animation
+    setTimeout(() => {
+      const newFiles = MOCK_DIRECTORY_FILES.filter((f) => selectedBrowserFiles.includes(f.id)).map((f) => ({
+        name: f.name,
+        size: f.size,
+        type: f.type,
+      }))
+      setUploadedFiles((prev) => [...prev, ...newFiles])
+      setSelectedBrowserFiles([])
+      setIsUploading(false)
+      setShowFileBrowser(false)
+    }, 1200)
+  }
+
+  function handleRemoveFile(fileName: string) {
+    setUploadedFiles((prev) => prev.filter((f) => f.name !== fileName))
+  }
+
   function handleSave() {
     onSave({
       name: name.trim(),
@@ -639,21 +685,86 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
           {step === 2 && (
             <div>
               <h1 className="text-xl font-bold text-[#111827] mb-2">配置数据来源</h1>
-              <p className="text-sm text-[#6B7280] mb-8">
-                选择 AI 生成策略时需要参考的数据来源
+              <p className="text-sm text-[#6B7280] mb-6">
+                上传相关材料，AI 将基于这些数据生成投资策略
               </p>
 
-              <div className="space-y-4 mb-8">
-                {["项目材料库", "研报中心", "行业数据库", "公开市场数据"].map((source) => (
-                  <label
-                    key={source}
-                    className="flex items-center gap-3 rounded-xl border border-[#E5E7EB] bg-white p-4 cursor-pointer hover:border-[#D1D5DB] transition-colors"
-                  >
-                    <input type="checkbox" defaultChecked className="h-4 w-4 rounded border-[#D1D5DB] text-[#2563EB] focus:ring-[#2563EB]" />
-                    <span className="text-sm font-medium text-[#374151]">{source}</span>
-                  </label>
-                ))}
-              </div>
+              {/* Upload Zone */}
+              <button
+                onClick={() => setShowFileBrowser(true)}
+                className="w-full rounded-2xl border-2 border-dashed border-[#D1D5DB] bg-white p-10 text-center transition-all hover:border-[#2563EB] hover:bg-blue-50/30 group mb-6"
+              >
+                <div className="flex flex-col items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#F3F4F6] group-hover:bg-blue-100 transition-colors">
+                    <Upload className="h-5 w-5 text-[#9CA3AF] group-hover:text-[#2563EB] transition-colors" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-[#374151] group-hover:text-[#2563EB] transition-colors">
+                      拖拽文件到此处或点击上传
+                    </p>
+                    <p className="mt-1 text-xs text-[#9CA3AF]">
+                      支持 PDF、Word、PPT 格式，如内部投资手册、IC 流程文档等
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              {/* Uploaded Files Section */}
+              {uploadedFiles.length > 0 && (
+                <div className="mb-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-medium text-[#374151]">已上传文件</h3>
+                    <span className="text-xs text-[#6B7280]">{uploadedFiles.length} 个文件</span>
+                  </div>
+                  <div className="space-y-2">
+                    {uploadedFiles.map((file) => (
+                      <div
+                        key={file.name}
+                        className="flex items-center justify-between rounded-xl border border-[#E5E7EB] bg-white px-4 py-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={cn(
+                            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold",
+                            file.type === "PDF" ? "bg-red-50 text-red-600" :
+                            file.type === "DOCX" ? "bg-blue-50 text-blue-600" :
+                            file.type === "XLSX" ? "bg-emerald-50 text-emerald-600" :
+                            file.type === "PPTX" ? "bg-orange-50 text-orange-600" :
+                            "bg-gray-50 text-gray-600"
+                          )}>
+                            {file.type}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-[#111827] truncate max-w-xs">{file.name}</p>
+                            <p className="text-xs text-[#9CA3AF]">{file.size}</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveFile(file.name)}
+                          className="flex h-7 w-7 items-center justify-center rounded-md text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#EF4444] transition-colors"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* AI Auto Research Checkbox */}
+              <label className="flex items-start gap-3 rounded-xl border border-[#E5E7EB] bg-white p-4 cursor-pointer hover:border-[#D1D5DB] transition-colors mb-8">
+                <input
+                  type="checkbox"
+                  checked={aiAutoResearch}
+                  onChange={(e) => setAiAutoResearch(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-[#D1D5DB] text-[#2563EB] focus:ring-[#2563EB]"
+                />
+                <div>
+                  <span className="text-sm font-medium text-[#374151]">AI 自动调研</span>
+                  <p className="mt-1 text-xs text-[#6B7280]">
+                    勾选后，AI 会自动搜索资料以供策略生成
+                  </p>
+                </div>
+              </label>
 
               <div className="flex items-center justify-between pt-4 border-t border-[#E5E7EB]">
                 <button
@@ -669,6 +780,126 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
                   下一步: 生成与审核
                 </button>
               </div>
+
+              {/* File Browser Modal */}
+              {showFileBrowser && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                  <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                    {/* Modal Header */}
+                    <div className="flex items-center justify-between border-b border-[#E5E7EB] px-6 py-4">
+                      <div>
+                        <h2 className="text-lg font-semibold text-[#111827]">选择文件</h2>
+                        <p className="text-xs text-[#6B7280] mt-0.5">从策略材料库中选择相关文件</p>
+                      </div>
+                      <button
+                        onClick={() => { setShowFileBrowser(false); setSelectedBrowserFiles([]) }}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-[#6B7280] hover:bg-[#F3F4F6] transition-colors"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+
+                    {/* Directory */}
+                    <div className="px-6 py-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Folder className="h-5 w-5 text-[#F59E0B]" />
+                        <span className="text-sm font-medium text-[#111827]">基础大模型策略材料</span>
+                        <span className="text-xs text-[#9CA3AF]">({MOCK_DIRECTORY_FILES.length} 个文件)</span>
+                      </div>
+
+                      {/* Select All */}
+                      <div className="flex items-center justify-between mb-3 pb-3 border-b border-[#E5E7EB]">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedBrowserFiles.length === MOCK_DIRECTORY_FILES.length}
+                            onChange={handleSelectAllFiles}
+                            className="h-4 w-4 rounded border-[#D1D5DB] text-[#2563EB] focus:ring-[#2563EB]"
+                          />
+                          <span className="text-sm font-medium text-[#374151]">全选</span>
+                        </label>
+                        <span className="text-xs text-[#6B7280]">
+                          已选 <span className="font-medium text-[#2563EB]">{selectedBrowserFiles.length}</span> 个
+                        </span>
+                      </div>
+
+                      {/* File List */}
+                      <div className="max-h-72 overflow-y-auto space-y-2 pr-1">
+                        {MOCK_DIRECTORY_FILES.map((file) => {
+                          const isSelected = selectedBrowserFiles.includes(file.id)
+                          return (
+                            <label
+                              key={file.id}
+                              className={cn(
+                                "flex items-center gap-3 rounded-xl border p-3 cursor-pointer transition-all",
+                                isSelected
+                                  ? "border-[#2563EB] bg-blue-50/50"
+                                  : "border-[#E5E7EB] bg-white hover:border-[#D1D5DB]"
+                              )}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => {
+                                  if (isSelected) {
+                                    setSelectedBrowserFiles(selectedBrowserFiles.filter((id) => id !== file.id))
+                                  } else {
+                                    setSelectedBrowserFiles([...selectedBrowserFiles, file.id])
+                                  }
+                                }}
+                                className="h-4 w-4 rounded border-[#D1D5DB] text-[#2563EB] focus:ring-[#2563EB]"
+                              />
+                              <div className={cn(
+                                "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold",
+                                file.type === "PDF" ? "bg-red-50 text-red-600" :
+                                file.type === "DOCX" ? "bg-blue-50 text-blue-600" :
+                                file.type === "XLSX" ? "bg-emerald-50 text-emerald-600" :
+                                "bg-gray-50 text-gray-600"
+                              )}>
+                                {file.type}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-[#111827] truncate">{file.name}</p>
+                                <p className="text-xs text-[#9CA3AF]">{file.size}</p>
+                              </div>
+                            </label>
+                          )
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Modal Footer */}
+                    <div className="flex items-center justify-end gap-3 border-t border-[#E5E7EB] px-6 py-4 bg-[#F9FAFB]">
+                      <button
+                        onClick={() => { setShowFileBrowser(false); setSelectedBrowserFiles([]) }}
+                        className="rounded-lg border border-[#D1D5DB] bg-white px-4 py-2 text-sm font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]"
+                      >
+                        取消
+                      </button>
+                      <button
+                        onClick={handleConfirmUpload}
+                        disabled={selectedBrowserFiles.length === 0 || isUploading}
+                        className="flex items-center gap-2 rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8] disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isUploading ? (
+                          <>
+                            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                            </svg>
+                            上传中...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="h-4 w-4" />
+                            确认上传 ({selectedBrowserFiles.length})
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -772,7 +1003,7 @@ export function StrategiesGrid({ strategies, onStrategiesChange, onSelectStrateg
               <Briefcase className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-[#111827]">策略中心</h1>
+              <h1 className="text-xl font-bold text-[#111827]">策略��心</h1>
               <p className="mt-0.5 text-sm text-[#6B7280]">
                 构建投资策略，可用于投资项目的初始化
               </p>
