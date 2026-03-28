@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { cn } from "@/lib/utils"
 import {
   Search,
   LayoutGrid,
@@ -685,9 +684,9 @@ const FRAMEWORK_MOCK_FILES = [
   { id: "fm3", name: "技术成熟度评估模型.xlsx", size: "1.2 MB", type: "XLSX", description: "基于TRL框架的技术成熟度评估量表，含性能瓶颈、迭代速度等关键指标" },
   { id: "fm4", name: "竞争格局分析框架.docx", size: "2.4 MB", type: "DOCX", description: "CR5计算方法、融资密度分析及竞争态势判断指南，附红海蓝海判定标准" },
   { id: "fm5", name: "单位经济模型验证清单.xlsx", size: "0.9 MB", type: "XLSX", description: "商业模式验证的关键指标清单：客户获取成本、留存率、LTV等核心公式" },
-  { id: "fm6", name: "创始团队评估矩阵.pdf", size: "2.1 MB", type: "PDF", description: "科技赛道创始人评估框架：技术背景、商业化能力、团队完整度评分表" },
+  { id: "fm6", name: "创始团队评估矩阵.pdf", size: "2.1 MB", type: "PDF", description: "��技赛道创始人评估框架：技术背景、商业化能力、团队完整度评分表" },
   { id: "fm7", name: "科技投资IC流程标准.pdf", size: "4.5 MB", type: "PDF", description: "投委会上会标准流程、材料要求及决策机制，含否决条件清单" },
-  { id: "fm8", name: "历史项目复盘报告汇编.pdf", size: "8.3 MB", type: "PDF", description: "近三年科技赛道投资项目复���：成功案例、失败教训及经验提炼" },
+  { id: "fm8", name: "历史项目复盘报告汇编.pdf", size: "8.3 MB", type: "PDF", description: "���三年科技赛道投资项目复���：成功案例、失败教训及经验提炼" },
 ]
 
 function DescribeMethodology({ onBack, onBackToList, onNext }: { onBack: () => void; onBackToList: () => void; onNext: () => void }) {
@@ -852,14 +851,13 @@ function DescribeMethodology({ onBack, onBackToList, onNext }: { onBack: () => v
                           className="flex-shrink-0 w-64 rounded-xl border border-[#E5E7EB] bg-white p-3 hover:border-[#D1D5DB] transition-colors group"
                         >
                           <div className="flex items-start gap-3">
-                            <div className={cn(
-                              "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold",
+                            <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold ${
                               file.type === "PDF" ? "bg-red-50 text-red-600" :
                               file.type === "DOCX" ? "bg-blue-50 text-blue-600" :
                               file.type === "XLSX" ? "bg-emerald-50 text-emerald-600" :
                               file.type === "PPTX" ? "bg-orange-50 text-orange-600" :
                               "bg-gray-50 text-gray-600"
-                            )}>
+                            }`}>
                               {file.type}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -937,12 +935,11 @@ function DescribeMethodology({ onBack, onBackToList, onNext }: { onBack: () => v
                         return (
                           <label
                             key={file.id}
-                            className={cn(
-                              "flex items-start gap-3 rounded-xl border p-3 cursor-pointer transition-all",
+                            className={`flex items-start gap-3 rounded-xl border p-3 cursor-pointer transition-all ${
                               isSelected
                                 ? "border-[#2563EB] bg-blue-50/50"
                                 : "border-[#E5E7EB] bg-white hover:border-[#D1D5DB]"
-                            )}
+                            }`}
                           >
                             <input
                               type="checkbox"
@@ -956,13 +953,12 @@ function DescribeMethodology({ onBack, onBackToList, onNext }: { onBack: () => v
                               }}
                               className="mt-1 h-4 w-4 rounded border-[#D1D5DB] text-[#2563EB] focus:ring-[#2563EB]"
                             />
-                            <div className={cn(
-                              "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold",
+                            <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold ${
                               file.type === "PDF" ? "bg-red-50 text-red-600" :
                               file.type === "DOCX" ? "bg-blue-50 text-blue-600" :
                               file.type === "XLSX" ? "bg-emerald-50 text-emerald-600" :
                               "bg-gray-50 text-gray-600"
-                            )}>
+                            }`}>
                               {file.type}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -1166,7 +1162,7 @@ const INITIAL_DIMENSIONS: ConfigDimension[] = [
   {
     id: "d3",
     name: "竞争格局分析",
-    description: "分析市场竞争态势、市场集中度和融资热度，判断竞争风险",
+    description: "分析市场竞争态势、市���集中度和融资热度，判断竞争风险",
     priority: "medium",
     indicators: [
       {
