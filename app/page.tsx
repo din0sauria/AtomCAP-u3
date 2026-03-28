@@ -169,10 +169,10 @@ export default function Page() {
         const newMaterials: StrategyMaterial[] = pending.uploadedMaterials.map((m, idx) => ({
           id: `sm-${newStrategyId}-${idx}`,
           strategyId: newStrategyId,
-          name: m.name,
+          name: m.name.replace(/\.[^.]+$/, ""), // strip file extension
           format: m.type || "PDF", // map type to format, default to PDF if undefined
           size: m.size,
-          description: "",
+          description: m.description || "",
           category: "通用材料",
           owner: "张伟",
           createdAt: new Date().toISOString().split("T")[0],
@@ -298,7 +298,7 @@ export default function Page() {
       const uploadedAtCreation: StrategyMaterial[] = (pending.uploadedFiles || []).map((f) => ({
         id: `uploaded-${f.id}-${Date.now()}`,
         strategyId: sid,
-        name: f.name.replace(/\.[^.]+$/, ""), // strip file extension (e.g. "闫俊杰_CV.pdf" → "闫俊杰_CV")
+        name: f.name.replace(/\.[^.]+$/, ""), // strip file extension (e.g. "���俊杰_CV.pdf" → "闫俊杰_CV")
         format: f.format,
         size: f.size,
         category: "",

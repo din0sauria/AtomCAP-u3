@@ -53,7 +53,7 @@ export interface PendingStrategy {
   // Generated content from AI during creation
   generatedHypotheses?: { direction: string; category: string; name: string }[]
   generatedTerms?: { direction: string; category: string; name: string }[]
-  uploadedMaterials?: { name: string; size: string; type: string }[]
+  uploadedMaterials?: { name: string; size: string; type: string; description: string }[]
 }
 
 export interface StrategyHypothesis {
@@ -234,7 +234,7 @@ export const initialStrategies: Strategy[] = [
     name: "国际贸易",
     icon: TrendingUp,
     iconBg: "bg-amber-100 text-amber-600",
-    description: "聚焦跨境贸易、全球供应链和国际化业务拓展",
+    description: "聚焦跨境贸易、全球供应链和国际化业��拓展",
     projectCount: 9,
     totalInvest: "6.3亿",
     returnRate: "+22%",
@@ -505,7 +505,7 @@ export interface CreateStrategyResult {
   strategy: Omit<Strategy, "id">
   generatedHypotheses: { direction: string; category: string; name: string }[]
   generatedTerms: { direction: string; category: string; name: string }[]
-  uploadedMaterials: { name: string; size: string; type: string }[]
+  uploadedMaterials: { name: string; size: string; type: string; description: string }[]
 }
 
 function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void; onSave: (result: CreateStrategyResult) => void; strategies: Strategy[] }) {
@@ -520,19 +520,23 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
 
   // Step 2 state
   const [showFileBrowser, setShowFileBrowser] = useState(false)
-  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; size: string; type: string }[]>([])
+  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; size: string; type: string; description: string }[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [aiAutoResearch, setAiAutoResearch] = useState(true)
   const [selectedBrowserFiles, setSelectedBrowserFiles] = useState<string[]>([])
 
-  // Mock directory files
+  // Mock directory files - matches AI基础设施 strategy's 通用材料 (10 files)
   const MOCK_DIRECTORY_FILES = [
-    { id: "f1", name: "GPU_AI芯片行业全景报告_2024.pdf", size: "6.8 MB", type: "PDF" },
-    { id: "f2", name: "全球算力基础设施市场规模分析.pdf", size: "4.3 MB", type: "PDF" },
-    { id: "f3", name: "主流AI训练框架技术对比.docx", size: "2.1 MB", type: "DOCX" },
-    { id: "f4", name: "云服务商GPU算力价格对比表.xlsx", size: "0.8 MB", type: "XLSX" },
-    { id: "f5", name: "AI基础设施投融资趋势报告_2023-2024.pdf", size: "5.6 MB", type: "PDF" },
-    { id: "f6", name: "数据中心能耗与可持续发展白皮书.pdf", size: "3.2 MB", type: "PDF" },
+    { id: "f1", name: "GPU_AI芯片行业全景报告_2024.pdf", size: "6.8 MB", type: "PDF", description: "涵盖英伟达、AMD、华为昇腾等主要厂商的AI芯片市场份额、技术路线及竞争格局分析" },
+    { id: "f2", name: "全球算力基础设施市场规模分析.pdf", size: "4.3 MB", type: "PDF", description: "IDC发布的全球AI算力基础设施市场规模预测，含数据中心、云算力及边缘算力细分数据" },
+    { id: "f3", name: "主流AI训练框架技术对比.docx", size: "2.1 MB", type: "DOCX", description: "PyTorch、TensorFlow、JAX等主流训练框架的性能基准、生态成熟度及企业采用情况对比" },
+    { id: "f4", name: "云服务商GPU算力价格对比表.xlsx", size: "0.8 MB", type: "XLSX", description: "AWS、Azure、GCP、阿里云等主流云厂商A100/H100算力租赁价格及性价比横向对比" },
+    { id: "f5", name: "AI基础设施投融资趋势报告_2023-2024.pdf", size: "5.6 MB", type: "PDF", description: "全球AI基础设施领域融资事件、投资机构偏好及典型案例汇总，含估值倍数参考区间" },
+    { id: "f6", name: "数据中心能耗与可持续发展白皮书.pdf", size: "3.2 MB", type: "PDF", description: "大模型训练能耗数据、PUE标准及主要云厂商碳中和路线图，用于评估ESG合规风险" },
+    { id: "f7", name: "大模型训练成本结构分析.xlsx", size: "1.4 MB", type: "XLSX", description: "主流大模型（GPT-4、Llama、文心等）训练成本拆解：算力、数据、人力占比及趋势" },
+    { id: "f8", name: "AI芯片技术路线图_GPU_TPU_NPU.pptx", size: "9.7 MB", type: "PPTX", description: "英伟达Blackwell、谷歌TPU v5、华为昇腾910C等新一代AI芯片架构与性能演进路线图" },
+    { id: "f9", name: "AI监管合规政策汇编.pdf", size: "2.9 MB", type: "PDF", description: "中国《生成式AI管理办法》、欧盟EU AI Act、美国AI行政令等主要市场监管政策要点摘编" },
+    { id: "f10", name: "国内外AI基础软件生态图谱.pdf", size: "7.1 MB", type: "PDF", description: "MLOps工具链、向量数据库、推理优化框架等AI基础软件全栈生态图谱及主要玩家分布" },
   ]
 
   function handleSelectAllFiles() {
@@ -552,6 +556,7 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
         name: f.name,
         size: f.size,
         type: f.type,
+        description: f.description,
       }))
       setUploadedFiles((prev) => [...prev, ...newFiles])
       setSelectedBrowserFiles([])
@@ -574,7 +579,7 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
   // Generated hypotheses and terms (mirrors AI基础设施 preset)
   const [generatedHypotheses] = useState([
     { id: "gen-h1", direction: "技术攻关", category: "算力与芯片", name: "国产AI芯片在推理场景下可替代英伟达方案", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-h2", direction: "技术攻关", category: "算力与芯片", name: "云端AI芯片市场将在3年内达到500亿美元规模", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-h2", direction: "技术攻关", category: "算力与芯片", name: "云端AI芯片市��将在3年内达到500亿美元规模", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
     { id: "gen-h3", direction: "技术攻关", category: "模型训练框架", name: "开源大模型训练框架将成为主流技术路线", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
     { id: "gen-h4", direction: "技术攻关", category: "模型训练框架", name: "分布式训练效率提升是大模型竞争关键", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
     { id: "gen-h5", direction: "技术攻关", category: "基础软件生态", name: "AI编译器将成为新的基础软件投资赛道", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
@@ -755,9 +760,12 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
                           )}>
                             {file.type}
                           </div>
-                          <div>
-                            <p className="text-sm font-medium text-[#111827] truncate max-w-xs">{file.name}</p>
-                            <p className="text-xs text-[#9CA3AF]">{file.size}</p>
+                          <div className="flex-1 min-w-0 max-w-sm">
+                            <p className="text-sm font-medium text-[#111827] truncate">{file.name}</p>
+                            {file.description && (
+                              <p className="text-xs text-[#6B7280] line-clamp-1 mt-0.5">{file.description}</p>
+                            )}
+                            <p className="text-[10px] text-[#9CA3AF] mt-0.5">{file.size}</p>
                           </div>
                         </div>
                         <button
@@ -876,13 +884,15 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
                                 file.type === "PDF" ? "bg-red-50 text-red-600" :
                                   file.type === "DOCX" ? "bg-blue-50 text-blue-600" :
                                     file.type === "XLSX" ? "bg-emerald-50 text-emerald-600" :
-                                      "bg-gray-50 text-gray-600"
+                                      file.type === "PPTX" ? "bg-orange-50 text-orange-600" :
+                                        "bg-gray-50 text-gray-600"
                               )}>
                                 {file.type}
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-[#111827] truncate">{file.name}</p>
-                                <p className="text-xs text-[#9CA3AF]">{file.size}</p>
+                                <p className="text-xs text-[#6B7280] line-clamp-1 mt-0.5">{file.description}</p>
+                                <p className="text-[10px] text-[#9CA3AF] mt-0.5">{file.size}</p>
                               </div>
                             </label>
                           )
@@ -1139,13 +1149,17 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
                                 file.type === "PDF" ? "bg-red-50 text-red-600" :
                                 file.type === "DOCX" ? "bg-blue-50 text-blue-600" :
                                 file.type === "XLSX" ? "bg-emerald-50 text-emerald-600" :
+                                file.type === "PPTX" ? "bg-orange-50 text-orange-600" :
                                 "bg-gray-50 text-gray-600"
                               )}>
                                 {file.type}
                               </div>
-                              <div>
-                                <p className="text-sm font-medium text-[#111827]">{file.name}</p>
-                                <p className="text-xs text-[#9CA3AF]">{file.size}</p>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-[#111827] truncate">{file.name}</p>
+                                {file.description && (
+                                  <p className="text-xs text-[#6B7280] line-clamp-1 mt-0.5">{file.description}</p>
+                                )}
+                                <p className="text-[10px] text-[#9CA3AF] mt-0.5">{file.size}</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
