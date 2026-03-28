@@ -317,7 +317,7 @@ const EXISTING_STRATEGIES_REF = [
 const CREATE_STEPS = [
   { num: 1, label: "基本信息" },
   { num: 2, label: "数据来源" },
-  { num: 3, label: "生成与审核" },
+  { num: 3, label: "策略审核" },
 ]
 
 /* ------------------------------------------------------------------ */
@@ -775,7 +775,7 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
                   onClick={() => setStep(3)}
                   className="rounded-lg bg-[#1F2937] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#111827]"
                 >
-                  下一步: 生成与审核
+                  下一步: 生成策略并审核
                 </button>
               </div>
 
@@ -903,7 +903,7 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
 
           {step === 3 && (
             <div>
-              <h1 className="text-xl font-bold text-[#111827] mb-2">生成与审核</h1>
+              <h1 className="text-xl font-bold text-[#111827] mb-2">策略审核</h1>
               <p className="text-sm text-[#6B7280] mb-8">
                 确认策略信息后，AI 将基于分析框架和数据来源自动生成策略内容
               </p>
