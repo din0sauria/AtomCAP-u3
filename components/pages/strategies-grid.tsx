@@ -597,22 +597,22 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
 
   // Generated hypotheses and terms (mirrors AI基础设施 preset)
   const [generatedHypotheses] = useState([
-    { id: "gen-h1", direction: "技术攻关", category: "算力与芯片", name: "国产AI芯片在推理场景下可替代英伟达方案", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-h2", direction: "技术攻关", category: "算力与芯片", name: "云端AI芯片市场将在3年内达到500亿美元规模", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-h3", direction: "技术攻关", category: "模型训练框架", name: "开源大模型训练框架将成为主流技术路线", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-h4", direction: "技术攻关", category: "模型训练框架", name: "分布式训练效率提升是大模型竞争关键", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-h5", direction: "技术攻关", category: "基础软件生态", name: "AI编译器将成为新的基础软件投资赛道", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-h6", direction: "技术攻关", category: "基础软件生态", name: "MLOps平台市场需求将快速增长", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-h7", direction: "团队能力", category: "创始人", name: "创始人具备丰富的AI产品商业化经验", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-h1", direction: "技术攻关", category: "算力与芯片", name: "国产AI芯片在推理场景下可替代英伟达方案", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-h2", direction: "技术攻关", category: "算力与芯片", name: "云端AI芯片市场将在3年内达到500亿美元规模", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-h3", direction: "技术攻关", category: "模型训练框架", name: "开源大模型训练框架将成为主流技术路线", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-h4", direction: "技术攻关", category: "模型训练框架", name: "分布式训练效率提升是大模型竞争关键", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-h5", direction: "技术攻关", category: "基础软件生态", name: "AI编译器将成为新的基础软件投资赛道", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-h6", direction: "技术攻关", category: "基础软件生态", name: "MLOps平台市场需求将快速增长", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-h7", direction: "团队能力", category: "创始人", name: "创始人具备丰富的AI产品商业化经验", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
   ])
 
   const [generatedTerms] = useState([
-    { id: "gen-t1", direction: "投资保护条款", category: "信息权", name: "投资方有权获取被投企业月度财务报告", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-t2", direction: "投资保护条款", category: "信息权", name: "投资方有权对重大技术决策进行知情和建议", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-t3", direction: "投资保护条款", category: "反稀释条款", name: "采用完全棘轮反稀释条款保护投资方权益", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-t4", direction: "控制权条款", category: "董事会席位", name: "投资方有权委派一名董事参与公司董事会", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-t5", direction: "控制权条款", category: "重大事项否决权", name: "对核心技术IP转让和授权享有一票否决权", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
-    { id: "gen-t6", direction: "退出条款", category: "回购条款", name: "若公司未能在5年内实现IPO，投资方有权要求回购", owner: "AI生成", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-t1", direction: "投资保护条款", category: "信息权", name: "投资方有权获取被投企业月度财务报告", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-t2", direction: "投资保护条款", category: "信息权", name: "投资方有权对重大技术决策进行知情和建议", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-t3", direction: "投资保护条款", category: "反稀释条款", name: "采用完全棘轮反稀释条款保护投资方权益", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-t4", direction: "控制权条款", category: "董事会席位", name: "投资方有权委派一名董事参与公司董事会", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-t5", direction: "控制权条款", category: "重大事项否决权", name: "对核心技术IP转让和授权享有一票否决权", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
+    { id: "gen-t6", direction: "退出条款", category: "回购条款", name: "若公司未能在5年内实现IPO，投资方有权要求回购", owner: "张伟", createdAt: new Date().toISOString().split("T")[0], status: "pending" },
   ])
 
   const ANALYSIS_STEPS = [
