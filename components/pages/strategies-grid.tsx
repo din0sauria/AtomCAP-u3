@@ -1330,13 +1330,14 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="rounded-md bg-blue-50 border border-blue-200 px-2.5 py-1 text-xs font-medium text-blue-700">{h.direction}</span>
                         <span className="rounded-md bg-violet-50 border border-violet-200 px-2.5 py-1 text-xs font-medium text-violet-700">{h.category}</span>
+                        <span className="rounded-md bg-amber-50 border border-amber-200 px-2.5 py-1 text-xs font-medium text-amber-700">QA-2026-001</span>
                         <span className="text-xs text-[#9CA3AF]">创建于 {h.createdAt}</span>
                       </div>
                     </div>
 
-                    {/* Description */}
+                    {/* Hypothesis Core Content - matching AI基础设施 style */}
                     <div className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] p-4">
-                      <h4 className="text-sm font-medium text-[#374151] mb-2">假设描述</h4>
+                      <h4 className="text-sm font-medium text-[#374151] mb-2">假设核心观点</h4>
                       <p className="text-sm text-[#6B7280] leading-relaxed">
                         {isAIChipHypothesis 
                           ? "基于国内AI芯片产业发展现状，我们认为在推理场景（而非训练场景）下，国产AI芯片有望在特定应用领域实现对英伟达方案的替代。这一判断基于推理任务对算力精度要求相对较低、国内厂商在推理芯片领域的持续突破，以及政策对国产替代的支持力度。"
@@ -1344,6 +1345,54 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
                         }
                       </p>
                     </div>
+
+                    {/* Value Points - matching AI基础设施 hypothesis detail */}
+                    {isAIChipHypothesis && (
+                      <div>
+                        <h4 className="text-sm font-medium text-[#374151] mb-3 flex items-center gap-2">
+                          <span className="flex h-5 w-5 items-center justify-center rounded bg-emerald-100 text-emerald-600">
+                            <TrendingUp className="h-3 w-3" />
+                          </span>
+                          价值点
+                        </h4>
+                        <div className="space-y-2">
+                          {[
+                            "推理芯片国产替代空间巨大，预计2025年市场规模达200亿",
+                            "政策支持力度持续加大，国产芯片采购比例逐年提升",
+                            "头部云厂商已开始测试国产推理芯片，商业化进程加速",
+                          ].map((point, idx) => (
+                            <div key={idx} className="flex items-start gap-2 rounded-lg border border-emerald-100 bg-emerald-50/50 p-3">
+                              <Check className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
+                              <span className="text-sm text-[#374151]">{point}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Risk Points - matching AI基础设施 hypothesis detail */}
+                    {isAIChipHypothesis && (
+                      <div>
+                        <h4 className="text-sm font-medium text-[#374151] mb-3 flex items-center gap-2">
+                          <span className="flex h-5 w-5 items-center justify-center rounded bg-red-100 text-red-600">
+                            <Target className="h-3 w-3" />
+                          </span>
+                          风险点
+                        </h4>
+                        <div className="space-y-2">
+                          {[
+                            "软件生态适配仍需时间，CUDA生态壁垒短期难以突破",
+                            "技术迭代速度落后英伟达1-2代，性能差距需持续关注",
+                            "供应链稳定性存在不确定性，晶圆代工产能受限",
+                          ].map((risk, idx) => (
+                            <div key={idx} className="flex items-start gap-2 rounded-lg border border-red-100 bg-red-50/50 p-3">
+                              <X className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
+                              <span className="text-sm text-[#374151]">{risk}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Verification Criteria */}
                     <div>
@@ -1379,6 +1428,7 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
                         {(isAIChipHypothesis ? [
                           { name: "GPU_AI芯片行业全景报告_2024.pdf", type: "PDF" },
                           { name: "AI芯片技术路线图_GPU_TPU_NPU.pptx", type: "PPTX" },
+                          { name: "国产AI芯片厂商竞争力分析.pdf", type: "PDF" },
                         ] : [
                           { name: "行业分析报告.pdf", type: "PDF" },
                         ]).map((doc, idx) => (
@@ -1391,6 +1441,19 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
                         ))}
                       </div>
                     </div>
+
+                    {/* Linked Terms */}
+                    {isAIChipHypothesis && (
+                      <div>
+                        <h4 className="text-sm font-medium text-[#374151] mb-3">关联条款</h4>
+                        <div className="rounded-lg border border-[#E5E7EB] bg-white p-3">
+                          <div className="flex items-center gap-2">
+                            <span className="rounded bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">控制权条款</span>
+                            <span className="text-sm text-[#374151]">投资方有权委派一名董事参与公司董事会</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )
               })()}
@@ -1449,47 +1512,95 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="rounded-md bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-xs font-medium text-emerald-700">{t.direction}</span>
                         <span className="rounded-md bg-amber-50 border border-amber-200 px-2.5 py-1 text-xs font-medium text-amber-700">{t.category}</span>
+                        <span className="rounded-md bg-blue-50 border border-blue-200 px-2.5 py-1 text-xs font-medium text-blue-700">TM-2026-001</span>
                         <span className="text-xs text-[#9CA3AF]">创建于 {t.createdAt}</span>
                       </div>
                     </div>
 
-                    {/* Description */}
-                    <div className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] p-4">
-                      <h4 className="text-sm font-medium text-[#374151] mb-2">条款描述</h4>
-                      <p className="text-sm text-[#6B7280] leading-relaxed">
-                        {isBoardSeatTerm 
-                          ? "投资方有权向公司董事会委派一名董事，参与公司重大经营决策。该董事享有与其他董事同等的投票权和知情权，公司应确保该董事能够及时获取董事会相关会议通知、议程及材料。"
-                          : "该条款明确了投资方与被投企业之间的权利义务关系，是保障投资方权益的重要法律文件组成部分。"
-                        }
-                      </p>
-                    </div>
-
-                    {/* Key Points */}
-                    <div>
-                      <h4 className="text-sm font-medium text-[#374151] mb-3">关键要点</h4>
-                      <div className="space-y-2">
-                        {(isBoardSeatTerm ? [
-                          { label: "委派权利", desc: "投资方有权指定一名符合条件的人员担任公司董事" },
-                          { label: "任期规定", desc: "董事任期与公司章程规定一致，投资方可随时更换委派人选" },
-                          { label: "权利保障", desc: "委派董事享有出席会议、审阅材料、参与表决等完整董事权利" },
-                          { label: "触发条件", desc: "投资方持股比例达到约定阈值时自动获得该权利" },
-                        ] : [
-                          { label: "适用范围", desc: "明确条款的适用场景和边界条件" },
-                          { label: "执行标准", desc: "条款执行的具体要求和流程" },
-                          { label: "例外情况", desc: "特殊情况下的处理方式" },
-                        ]).map((point, idx) => (
-                          <div key={idx} className="flex items-start gap-3 rounded-lg border border-[#E5E7EB] bg-white p-3">
-                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-medium text-emerald-600">
-                              {idx + 1}
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-[#111827]">{point.label}</p>
-                              <p className="text-xs text-[#6B7280] mt-0.5">{point.desc}</p>
-                            </div>
-                          </div>
-                        ))}
+                    {/* Our Demand - matching AI基础设施 term-sheet style */}
+                    {isBoardSeatTerm && (
+                      <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4">
+                        <h4 className="text-sm font-medium text-blue-800 mb-2 flex items-center gap-2">
+                          <span className="flex h-5 w-5 items-center justify-center rounded bg-blue-100">
+                            <Target className="h-3 w-3 text-blue-600" />
+                          </span>
+                          我方诉求
+                        </h4>
+                        <p className="text-sm text-[#374151] leading-relaxed">
+                          投资方要求在公司董事会中获得一个正式董事席位，该董事享有与其他董事同等的表决权和知情权，参与公司所有重大经营决策的审议和表决。
+                        </p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <span className="inline-flex items-center gap-1.5 rounded border border-blue-200 bg-white px-2 py-1 text-xs text-[#374151]">
+                            <span className="rounded bg-red-50 px-1 py-0.5 text-[10px] font-bold text-red-600">PDF</span>
+                            投资条款清单_v1.pdf
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 rounded border border-blue-200 bg-white px-2 py-1 text-xs text-[#374151]">
+                            <span className="rounded bg-blue-50 px-1 py-0.5 text-[10px] font-bold text-blue-600">DOCX</span>
+                            董事会席位要求说明.docx
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    )}
+
+                    {/* Our Basis - matching AI基础设施 term-sheet style */}
+                    {isBoardSeatTerm && (
+                      <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
+                        <h4 className="text-sm font-medium text-emerald-800 mb-2 flex items-center gap-2">
+                          <span className="flex h-5 w-5 items-center justify-center rounded bg-emerald-100">
+                            <Check className="h-3 w-3 text-emerald-600" />
+                          </span>
+                          我方依据
+                        </h4>
+                        <p className="text-sm text-[#374151] leading-relaxed">
+                          基于本轮投资金额（5000万美元）及持股比例（15%），按照行业惯例，该投资规模的股东通常可获得董事会席位。参考同类型投资案例，如红杉资本在字节跳动B轮的类似安排。此外，作为战略投资方，我们的行业资源和技术能力可为公司发展提供重要支持，董事席位有助于更好地发挥协同效应。
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Bilateral Conflict - matching AI基础设施 term-sheet style */}
+                    {isBoardSeatTerm && (
+                      <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-4">
+                        <h4 className="text-sm font-medium text-amber-800 mb-2 flex items-center gap-2">
+                          <span className="flex h-5 w-5 items-center justify-center rounded bg-amber-100">
+                            <X className="h-3 w-3 text-amber-600" />
+                          </span>
+                          双边冲突点
+                        </h4>
+                        <p className="text-sm text-[#374151] leading-relaxed">
+                          创始团队担忧：1）外部董事可能干预公司日常运营决策，影响管理层独立性；2）涉及核心技术和商业机密的讨论可能因外部董事参与而存在信息泄露风险；3）董事会决策效率可能因新增成员而降低。公司律师建议限制投资方董事的表决事项范围。
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Our Bottom Line - matching AI基础设施 term-sheet style */}
+                    {isBoardSeatTerm && (
+                      <div className="rounded-xl border border-red-200 bg-red-50/50 p-4">
+                        <h4 className="text-sm font-medium text-red-800 mb-2 flex items-center gap-2">
+                          <span className="flex h-5 w-5 items-center justify-center rounded bg-red-100">
+                            <Target className="h-3 w-3 text-red-600" />
+                          </span>
+                          我方底线
+                        </h4>
+                        <p className="text-sm text-[#374151] leading-relaxed">
+                          必须获得至少一个董事会席位，且该席位必须是正式董事而非观察员。董事必须有权参与所有重大事项的表决，包括但不限于：年度预算审批、重大投资决策、核心高管任免、关联交易审批等。不接受仅限于特定事项的表决权限制。
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Compromise Space - matching AI基础设施 term-sheet style */}
+                    {isBoardSeatTerm && (
+                      <div className="rounded-xl border border-violet-200 bg-violet-50/50 p-4">
+                        <h4 className="text-sm font-medium text-violet-800 mb-2 flex items-center gap-2">
+                          <span className="flex h-5 w-5 items-center justify-center rounded bg-violet-100">
+                            <Briefcase className="h-3 w-3 text-violet-600" />
+                          </span>
+                          妥协空间
+                        </h4>
+                        <p className="text-sm text-[#374151] leading-relaxed">
+                          可接受的妥协方案：1）同意签署严格的保密协议，明确信息使用范围和泄露责任；2）同意在涉及创始人个人利益的事项上回避表决；3）同意首年仅以观察员身份参与，但需在协议中明确一年后自动转为正式董事；4）可考虑将部分敏感技术讨论单独安排，投资方董事不参与该部分会议。
+                        </p>
+                      </div>
+                    )}
 
                     {/* Standard Clause Text */}
                     <div>
@@ -1503,6 +1614,19 @@ function CreateStrategy({ onCancel, onSave, strategies }: { onCancel: () => void
                         </p>
                       </div>
                     </div>
+
+                    {/* Linked Hypothesis */}
+                    {isBoardSeatTerm && (
+                      <div>
+                        <h4 className="text-sm font-medium text-[#374151] mb-3">关联假设</h4>
+                        <div className="rounded-lg border border-[#E5E7EB] bg-white p-3">
+                          <div className="flex items-center gap-2">
+                            <span className="rounded bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700">技术假设</span>
+                            <span className="text-sm text-[#374151]">国产AI芯片在推理场景下可替代英伟达方案</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )
               })()}
